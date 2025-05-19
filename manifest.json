@@ -1,0 +1,18 @@
+{
+    "manifest_version": 2,
+    "name": "YouTube Redirector",
+    "version": "1.0",
+    "description": "Redirects YouTube videos to a custom website.",
+    "permissions": [
+      "tabs",
+      "*://www.youtube.com/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["*://www.youtube.com/watch*"],
+        "js": ["redirect.js"],
+        "run_at": "document_start"
+      }
+    ]
+  }
+  
