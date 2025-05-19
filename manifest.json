@@ -5,15 +5,20 @@
     "description": "Redirects YouTube videos to a no-cookies and no ads version.",
     "permissions": [
       "tabs",
-      "*://www.youtube.com/*"
+      "activeTab",
+      "*://www.youtube.com/*",
+      "*://www.youtube-nocookie.com/*"
     ],
-    "content_scripts": [
-      {
-        "matches": ["*://www.youtube.com/watch*"],
-        "js": ["redirect.js"],
-        "run_at": "document_start"
+    "browser_action": {
+      "default_title": "Redirect YouTube Video",
+      "default_icon": {
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png"
       }
-    ],
+    },
+    "background": {
+      "scripts": ["on_click.js"]
+    },
     "browser_specific_settings": {
   "gecko": {
     "id": "cython.chev@gmail.com"
