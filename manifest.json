@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "YouTube Redirector",
-    "version": "0.3",
-    "description": "Redirects YouTube videos to a no-cookies and no ads version.",
+    "name": "YouTube Swapper",
+    "version": "1.0",
+    "description": "Switch youtube video players, between the default one and a privacy-focused ad-free version.",
     "permissions": [
       "tabs",
       "activeTab",
