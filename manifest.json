@@ -13,6 +13,12 @@
         "js": ["redirect.js"],
         "run_at": "document_start"
       }
-    ]
-  }
+    ],
+    "browser_specific_settings": {
+  "gecko": {
+    "id": "your-unique-id@domain.com",
+    "update_url": "https://your-domain.com/updates.json"
+        }
+    }
+}
   
