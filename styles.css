@@ -1,0 +1,28 @@
+/* styles.css */
+
+/* Light mode styles (default) */
+body {
+    background-color: white;
+    color: black;
+  }
+  
+  /* Dark mode styles */
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #333333;
+      color: #e2e2e2;
+    }
+    h1, h2, h3, h4, h5 {
+      color: #f4f4f4;
+    }
+    img {
+      filter: grayscale(20%);
+    }
+    hr {
+      border-color: #555555;
+    }
+    p code {
+      color: #333333;
+    }
+  }
+  

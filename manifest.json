@@ -7,7 +7,8 @@
       "tabs",
       "activeTab",
       "*://www.youtube.com/*",
-      "*://www.youtube-nocookie.com/*"
+      "*://www.youtube-nocookie.com/*",
+      "storage"
     ],
     "browser_action": {
       "default_title": "Redirect YouTube Video",
@@ -27,5 +28,9 @@
     "icons": {
         "48": "icons/icon-48.png",
         "96": "icons/icon-96.png"
+    },
+    "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
     }
 }
