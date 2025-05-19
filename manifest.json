@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "YouTube Redirector",
     "version": "1.0",
-    "description": "Redirects YouTube videos to a custom website.",
+    "description": "Redirects YouTube videos to a no-cookies and no ads version.",
     "permissions": [
       "tabs",
       "*://www.youtube.com/*"
@@ -16,9 +16,13 @@
     ],
     "browser_specific_settings": {
   "gecko": {
-    "id": "your-unique-id@domain.com",
+    "id": "cython.chev@gmail.com",
     "update_url": "https://your-domain.com/updates.json"
         }
+    },
+    "icons": {
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png"
     }
 }
   
