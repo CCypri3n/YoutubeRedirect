@@ -8,7 +8,9 @@
       "activeTab",
       "*://www.youtube.com/*",
       "*://www.youtube-nocookie.com/*",
-      "storage"
+      "*://www.m.youtube.com/*",
+      "storage",
+      "notifications"
     ],
     "browser_action": {
       "default_title": "Redirect YouTube Video",
