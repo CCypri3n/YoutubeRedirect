@@ -35,5 +35,11 @@
     "options_ui": {
       "page": "options.html",
       "open_in_tab": true
-    }
+    },
+"content_scripts": [
+  {
+    "matches": ["https://notube.lol/*"],
+    "js": ["notube-inject.js"],
+    "run_at": "document_end"
+  }]
 }

@@ -21,7 +21,7 @@
     const path = new URL(currentUrl).pathname;
     const videoId = path.split('/embed/')[1];
     if (videoId) {
-      const targetUrl = `https://youtube.com/watch?v=${videoId}`;
+      const targetUrl = `https://youtube.com/watch?v=${videoId}&themeRefresh=1`;
       browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
       window.location.replace(targetUrl);
     }

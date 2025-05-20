@@ -1,11 +1,5 @@
 // background.js
 
-// Add quick access to settings in context menu
-browser.contextMenus.create({
-  id: "open-options",
-  title: "Open Settings",
-  contexts: ["browser_action"]
-});
 
 // Toggle the context menu for the subtitles
 function createOrUpdateSubtitleMenu(enabled) {
@@ -17,10 +11,59 @@ function createOrUpdateSubtitleMenu(enabled) {
   });
 }
 
-// On extension startup, create the menu based on stored value
-browser.storage.local.get({ cc_load_policy: 1 }).then(result => {
-  createOrUpdateSubtitleMenu(result.cc_load_policy === 1);
+// Toggle the context menu for download using notube.lol
+function toggleDownloadMenu(enabled) {
+  console.log("toggleDownloadMenu called with: ", enabled, typeof enabled);
+  const title = "Download video";
+  browser.contextMenus.remove("download-video").catch(() => {}).then(() => {
+    if (enabled) {
+      console.log("toggleDownloadMenu activated with: ", enabled, typeof enabled);
+      browser.contextMenus.create({
+        id: "download-video",
+        title: title,
+        contexts: ["browser_action"], // or "action" for MV3
+      });
+    }
+  });
+}
+
+// On extension startup, remove all context menus and then recreate the current state
+browser.contextMenus.removeAll().then(() => {
+  // Add quick access to settings in context menu
+  browser.contextMenus.create({
+    id: "open-options",
+    title: "Open Settings",
+    contexts: ["browser_action"]
+  });
+
+  // Add quick access to settings in context menu
+  browser.contextMenus.create({
+    id: "url-github",
+    title: "Github",
+    contexts: ["browser_action"]
+  });
+
+  // Toggle the context menu for the subtitles
+  browser.storage.local.get({ cc_load_policy: 1 }).then(result => {
+    createOrUpdateSubtitleMenu(result.cc_load_policy === 1);
+  });
+
+  // Download button menu based on stored value
+  browser.storage.local.get({ download_policy: 0 }).then(result => {
+    toggleDownloadMenu(Number(result.download_policy) === 1); // === 1 means menu shows
+  });  
+  
 });
+
+
+// Handle options changes for download context menu
+browser.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && changes.download_policy) {
+    toggleDownloadMenu(Number(changes.download_policy.newValue) === 1); // === 1 means menu shows
+  }
+});
+
+
 
 
 //handle contextMenu clicks
@@ -46,6 +89,22 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       });
     });
   }
+  else if (info.menuItemId === "url-github") {
+    browser.tabs.create({
+      url: "https://github.com/CCypri3n/YoutubeRedirect"
+    });
+  }
+  else if (info.menuItemId === "download-video") {
+    if (tab.url.includes("youtube.com/watch") || tab.url.includes("youtube-nocookie.com")) {
+      console.log(`Download context clicked, running download.js on ${tab.id}`);
+      browser.tabs.executeScript(tab.id, { file: "download.js" })
+        .catch(err => console.error("Failed to inject download script:", err));
+    } 
+    else {
+      notify("Download not applicable", "This extension only works on youtube.com and youtube-nocookie.com.");
+      console.log("This download button only works on YouTube or youtube-nocookie video pages.");
+    }
+  }    
 });
 
 
@@ -82,7 +141,7 @@ browser.browserAction.onClicked.addListener((tab) => {
   }
 });
 
-browser.runtime.onMessage.addListener((message) => {
+browser.runtime.onMessage.addListener((message, sender, sendReponse) => {
     if (message.log) {
       console.log("From content script:", message.log);
     }
@@ -90,5 +149,10 @@ browser.runtime.onMessage.addListener((message) => {
         const title = message.notify;
         const content = message.content;
         notify(title, content);
+    }
+    else if (message.action === "open-download-tab" && message.videoId) {
+      browser.tabs.create({
+        url: `https://notube.lol/?video=${encodeURIComponent(message.videoId)}`
+      });
     }
   });
