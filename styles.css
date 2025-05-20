@@ -4,7 +4,11 @@
 body {
     background-color: white;
     color: black;
+    font-family: Arial, Arial, Helvetica, sans-serif;
   }
+h1, h2, h3, h4, h5 {
+    font-family: Arial, Arial, Helvetica, sans-serif;
+}
   
   /* Dark mode styles */
   @media (prefers-color-scheme: dark) {
@@ -14,7 +18,23 @@ body {
     }
     h1, h2, h3, h4, h5 {
       color: #f4f4f4;
+      font-family: Arial, Arial, Helvetica, sans-serif;
     }
+    .button {
+        background-color: #04AA6D; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 10px;
+      }
+      .button:hover {
+          box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+      }
+      
     img {
       filter: grayscale(20%);
     }
