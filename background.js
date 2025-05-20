@@ -4,21 +4,26 @@
 // Toggle the context menu for the subtitles
 function createOrUpdateSubtitleMenu(enabled) {
   const title = enabled ? "Turn Subtitles Off" : "Turn Subtitles On";
-  browser.contextMenus.create({
-    id: "toggle-subtitles",
-    title: title,
-    contexts: ["browser_action"], // or "action" for MV3
+  browser.contextMenus.remove("toggle-subtitles").catch(() => {}).then(() => {
+    browser.contextMenus.create({
+      id: "toggle-subtitles",
+      title: title,
+      contexts: ["browser_action"], // or "action" for MV3
+    });
   });
 }
 
 function createOrUpdateNotificationMenu(enabled) {
   const title = enabled ? "Do not disturb" : "Do disturb";
-  browser.contextMenus.create({
-    id: "toggle-notifications",
-    title: title,
-    contexts: ["browser_action"], // or "action" for MV3
+  browser.contextMenus.remove("toggle-notifications").catch(() => {}).then(() => {
+    browser.contextMenus.create({
+      id: "toggle-notifications",
+      title: title,
+      contexts: ["browser_action"], // or "action" for MV3
+    });
   });
 }
+
 
 // Toggle the context menu for download using notube.lol
 function toggleDownloadMenu(enabled) {
@@ -36,46 +41,58 @@ function toggleDownloadMenu(enabled) {
   });
 }
 
-// On extension startup, remove all context menus and then recreate the current state
-browser.contextMenus.removeAll().then(() => {
-  // Add quick access to settings in context menu
-  browser.contextMenus.create({
-    id: "open-options",
-    title: "Open Settings",
-    contexts: ["browser_action"]
+function rebuildContextMenus(state) {
+  browser.contextMenus.removeAll().then(() => {
+    // Always in the same order:
+    browser.contextMenus.create({
+      id: "open-options",
+      title: "Open Settings",
+      contexts: ["browser_action"]
+    });
+    browser.contextMenus.create({
+      id: "url-github",
+      title: "Github",
+      contexts: ["browser_action"]
+    });
+    browser.contextMenus.create({
+      id: "toggle-subtitles",
+      title: state.cc_load_policy === 1 ? "Turn Subtitles Off" : "Turn Subtitles On",
+      contexts: ["browser_action"]
+    });
+    browser.contextMenus.create({
+      id: "toggle-notifications",
+      title: state.notifications_allowed === 1 ? "Do not disturb" : "Do disturb",
+      contexts: ["browser_action"]
+    });
+    if (state.download_policy === 1) {
+      browser.contextMenus.create({
+        id: "download-video",
+        title: "Download Video",
+        contexts: ["browser_action"]
+      });
+    }
   });
+}
 
-  // Add quick access to settings in context menu
-  browser.contextMenus.create({
-    id: "url-github",
-    title: "Github",
-    contexts: ["browser_action"]
-  });
+function getCurrentStateAndRebuildMenus() {
+  browser.storage.local.get({
+    cc_load_policy: 1,
+    notifications_allowed: 1,
+    download_policy: 0
+  }).then(rebuildContextMenus);
+}
 
-  // Toggle the context menu for the subtitles
-  browser.storage.local.get({ cc_load_policy: 1 }).then(result => {
-    createOrUpdateSubtitleMenu(result.cc_load_policy);
-  });
+// On extension startup:
+getCurrentStateAndRebuildMenus();
 
-  browser.storage.local.get({ notifications_allowed: 1 }).then(result => {
-    createOrUpdateNotificationMenu(result.notifications_allowed === 1);
-  });
-
-  // Download button menu based on stored value
-  browser.storage.local.get({ download_policy: 0 }).then(result => {
-    toggleDownloadMenu(Number(result.download_policy) === 1); // === 1 means menu shows
-  });  
-  
-});
-
-
-// Handle options changes for download context menu
+// On settings change:
 browser.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && changes.download_policy) {
-    toggleDownloadMenu(Number(changes.download_policy.newValue) === 1); // === 1 means menu shows
-  }
-  else if (area === "local" && changes.notifications_allowed) {
-    createOrUpdateNotificationMenu(Number(changes.notifications_allowed.newValue) === 1); // === 1 means menu shows
+  if (area === "local" && (
+    changes.download_policy ||
+    changes.notifications_allowed ||
+    changes.cc_load_policy
+  )) {
+    getCurrentStateAndRebuildMenus();
   }
 });
 
@@ -128,11 +145,13 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       // Save new state
       browser.storage.local.set({ notifications_allowed: next });
       // Update menu title accordingly
-      browser.contextMenus.update("toggle-notifications"), {
-        title: next ? "Do Not Disturb" : "Do Disturb"}
+      browser.contextMenus.update("toggle-notifications", {
+        title: next ? "Do Not Disturb" : "Do Disturb"
       });
+    });
   }
-});
+  
+  });
 
 
 function redirectYouTubeTab(tabId) {
@@ -182,4 +201,7 @@ browser.runtime.onMessage.addListener((message, sender, sendReponse) => {
         url: `https://notube.lol/?video=${encodeURIComponent(message.videoId)}`
       });
     }
-  });
+    if (message.action === "rebuild-context-menus") {
+      getCurrentStateAndRebuildMenus();
+    }
+  })

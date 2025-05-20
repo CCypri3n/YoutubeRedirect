@@ -21,6 +21,7 @@ function saveOptions() {
   browser.storage.local.set({ hl, cc_lang, cc_load_policy, theme, notifications_allowed, download_policy, download_format, }).then(() => {
     const status = document.getElementById('status');
     status.textContent = 'Options saved.';
+    browser.runtime.sendMessage({ action: "rebuild-context-menus" });
     setTimeout(() => {
       status.textContent = '';
       window.close();
