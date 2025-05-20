@@ -1,2 +1,2 @@
 # YoutubeRedirect
-A Firefox extension that automatically redirects youtube-video links to a youtube version with no cookies and no ads.
+A Firefox extension that can switch between the youtube player and a cookie-free, ad-free version for a cleaner viewing experience.
