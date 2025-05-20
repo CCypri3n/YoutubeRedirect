@@ -4,6 +4,7 @@
     "version": "1.0",
     "description": "Switch youtube video players, between the default one and a privacy-focused ad-free version.",
     "permissions": [
+      "contextMenus",
       "tabs",
       "activeTab",
       "*://www.youtube.com/*",
@@ -13,14 +14,14 @@
       "notifications"
     ],
     "browser_action": {
-      "default_title": "Redirect YouTube Video",
+      "default_title": "Swap YouTube Player",
       "default_icon": {
         "48": "icons/icon-48.png",
         "96": "icons/icon-96.png"
       }
     },
     "background": {
-      "scripts": ["on_click.js"]
+      "scripts": ["background.js"]
     },
     "browser_specific_settings": {
   "gecko": {

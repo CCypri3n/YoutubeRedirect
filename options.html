@@ -6,7 +6,9 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>YouTube Switch Settings</h1>
+  <h1>YouTubeSwitch settings</h1>
+
+  <h2>Nocookie-player settings</h2>
 
   <label for="hl">Interface language (hl): </label>
   <select id="hl">
@@ -15,6 +17,8 @@
     <option value="de">Deutsch</option>
     <option value="es">Español</option>
   </select><br/><br/>
+
+
   <label for="cc_lang">Subtitle language (cc): </label>
   <select id="cc_lang">
     <option value="en">English</option>
@@ -29,21 +33,25 @@
     <option value=1>on</option>
   </select><br/><br/>
 
-  <label for="notifications_allowed">Notifications: </label>
-  <select id="notifications_allowed">
-    <option value=0>off</option>
-    <option value=1>on</option>
-  </select><br/><br/>
-
   <label for="theme">Theme: </label>
   <select id="theme">
     <option value="light">Light</option>
     <option value="dark">Dark</option>
   </select><br/><br/>
 
+  <h2>Extension settings</h2>
+  <label for="notifications_allowed">Notifications: </label>
+  <select id="notifications_allowed">
+    <option value=0>off</option>
+    <option value=1>on</option>
+  </select><br/>
+  <label class="attention">(Check if Firefox is allowed to send notifications, in order for this to work)</label><br/><br/>
+
+
   <button id="saveBtn" class="button">Save</button>
   <div id="status"></div>
 
     <script src="options.js"></script>
+
 </body>
 </html>
