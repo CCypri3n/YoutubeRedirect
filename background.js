@@ -11,6 +11,15 @@ function createOrUpdateSubtitleMenu(enabled) {
   });
 }
 
+function createOrUpdateNotificationMenu(enabled) {
+  const title = enabled ? "Do not disturb" : "Do disturb";
+  browser.contextMenus.create({
+    id: "toggle-notifications",
+    title: title,
+    contexts: ["browser_action"], // or "action" for MV3
+  });
+}
+
 // Toggle the context menu for download using notube.lol
 function toggleDownloadMenu(enabled) {
   console.log("toggleDownloadMenu called with: ", enabled, typeof enabled);
@@ -45,7 +54,11 @@ browser.contextMenus.removeAll().then(() => {
 
   // Toggle the context menu for the subtitles
   browser.storage.local.get({ cc_load_policy: 1 }).then(result => {
-    createOrUpdateSubtitleMenu(result.cc_load_policy === 1);
+    createOrUpdateSubtitleMenu(result.cc_load_policy);
+  });
+
+  browser.storage.local.get({ notifications_allowed: 1 }).then(result => {
+    createOrUpdateNotificationMenu(result.notifications_allowed === 1);
   });
 
   // Download button menu based on stored value
@@ -60,6 +73,9 @@ browser.contextMenus.removeAll().then(() => {
 browser.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && changes.download_policy) {
     toggleDownloadMenu(Number(changes.download_policy.newValue) === 1); // === 1 means menu shows
+  }
+  else if (area === "local" && changes.notifications_allowed) {
+    createOrUpdateNotificationMenu(Number(changes.notifications_allowed.newValue) === 1); // === 1 means menu shows
   }
 });
 
@@ -104,7 +120,18 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       notify("Download not applicable", "This extension only works on youtube.com and youtube-nocookie.com.");
       console.log("This download button only works on YouTube or youtube-nocookie video pages.");
     }
-  }    
+  }
+  else if (info.menuItemId === "toggle-notifications") {
+    browser.storage.local.get({ notifications_allowed: 1 }).then(result => {
+      const current = result.notifications_allowed === 1;
+      const next = current ? 0 : 1; // Toggle
+      // Save new state
+      browser.storage.local.set({ notifications_allowed: next });
+      // Update menu title accordingly
+      browser.contextMenus.update("toggle-notifications"), {
+        title: next ? "Do Not Disturb" : "Do Disturb"}
+      });
+  }
 });
 
 
