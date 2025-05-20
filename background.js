@@ -14,7 +14,7 @@ function createOrUpdateSubtitleMenu(enabled) {
 // Toggle the context menu for download using notube.lol
 function toggleDownloadMenu(enabled) {
   console.log("toggleDownloadMenu called with: ", enabled, typeof enabled);
-  const title = "Download video";
+  const title = "Download Video";
   browser.contextMenus.remove("download-video").catch(() => {}).then(() => {
     if (enabled) {
       console.log("toggleDownloadMenu activated with: ", enabled, typeof enabled);

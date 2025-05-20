@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "YouTube Swapper",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Switch youtube video players, between the default one and a privacy-focused ad-free version.",
     "permissions": [
       "contextMenus",
