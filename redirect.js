@@ -9,11 +9,26 @@
     hl: 'en',
     cc_lang: 'en',
     cc_load_policy: 1,
-    theme: 'dark'
+    theme: 'dark',
+    preserve_timestamp: 0,
   });
+  let timestamp = ""
+  if (Number(options.preserve_timestamp)) {
+    browser.runtime.sendMessage({ log: `Fetching with ${options.preserve_timestamp}, ${typeof options.preserve_timestamp}`})
+    const ts = getTimestamp();
+    browser.runtime.sendMessage({ log: `Fetched Timestamp: ${ts} with ${options.preserve_timestamp}, ${typeof options.preserve_timestamp}`})
+      if (currentUrl.includes("youtube.com/watch") && ts) {
+        timestamp = `&start=${Math.floor(ts)}`;
+      }
+      else if (ts) {
+        timestamp = `&t=${Math.floor(ts)}s`;
+      }
+      browser.runtime.sendMessage({ log: `Set Timestamp: ${timestamp} with ${options.preserve_timestamp}, ${typeof options.preserve_timestamp}`})
+  }
+  
 
   if (videoId && currentUrl.includes("youtube.com/watch")) {
-    const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${options.theme}&hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}`;
+    const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${options.theme}&hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}${timestamp}`;
     browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
     window.location.replace(targetUrl);
 
@@ -21,9 +36,27 @@
     const path = new URL(currentUrl).pathname;
     const videoId = path.split('/embed/')[1];
     if (videoId) {
-      const targetUrl = `https://youtube.com/watch?v=${videoId}&themeRefresh=1`;
+      const targetUrl = `https://youtube.com/watch?v=${videoId}&themeRefresh=1${timestamp}`;
       browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
       window.location.replace(targetUrl);
     }
   }
 })();
+
+function getTimestamp() {
+  const currentUrl = window.location.href;
+  browser.runtime.sendMessage({ log: "Fetching timestamp from player." });
+
+  let ytvideo = null;
+
+  if (currentUrl.includes("youtube.com/watch") || currentUrl.includes("youtube-nocookie.com/embed")) {
+    ytvideo = document.querySelector('video.html5-main-video');
+    if (ytvideo) {
+      return Number(ytvideo.currentTime);
+    } else {
+      browser.runtime.sendMessage({ log: "ERROR: Video player element not found." });
+      return null;
+    }
+  }
+  return null;
+}
