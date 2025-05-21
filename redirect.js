@@ -11,9 +11,10 @@
     cc_load_policy: 1,
     theme: 'dark',
     preserve_timestamp: 0,
+    tab_history: 0,
   });
   let timestamp = ""
-  if (Number(options.preserve_timestamp)) {
+  if (Number(options.preserve_timestamp) && (currentUrl.includes("youtube.com/watch") || currentUrl.includes("youtube-nocookie.com/embed"))) {
     browser.runtime.sendMessage({ log: `Fetching with ${options.preserve_timestamp}, ${typeof options.preserve_timestamp}`})
     const ts = getTimestamp();
     browser.runtime.sendMessage({ log: `Fetched Timestamp: ${ts} with ${options.preserve_timestamp}, ${typeof options.preserve_timestamp}`})
@@ -30,7 +31,12 @@
   if (videoId && currentUrl.includes("youtube.com/watch")) {
     const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${options.theme}&hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}${timestamp}`;
     browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
-    window.location.replace(targetUrl);
+    if (Number(options.tab_history)) {
+      window.location.assign(targetUrl);
+    }
+    else {
+      window.location.replace(targetUrl)
+    }
 
   } else if (currentUrl.includes("youtube-nocookie.com/embed")) {
     const path = new URL(currentUrl).pathname;
@@ -38,7 +44,12 @@
     if (videoId) {
       const targetUrl = `https://youtube.com/watch?v=${videoId}&themeRefresh=1${timestamp}`;
       browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
-      window.location.replace(targetUrl);
+      if (Number(options.tab_history)) {
+        window.location.assign(targetUrl);
+      }
+      else {
+        window.location.replace(targetUrl)
+      }
     }
   }
 })();

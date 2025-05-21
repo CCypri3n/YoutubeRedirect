@@ -51,7 +51,7 @@ function rebuildContextMenus(state) {
     });
     browser.contextMenus.create({
       id: "url-github",
-      title: "Github",
+      title: "Support me on Github",
       contexts: ["browser_action"]
     });
     browser.contextMenus.create({
@@ -71,6 +71,11 @@ function rebuildContextMenus(state) {
         contexts: ["browser_action"]
       });
     }
+    browser.contextMenus.create({
+      id: "open-in-nocookies",
+      title: "Open video in a new nocookies tab",
+      contexts: ["link"]
+    })
   });
 }
 
@@ -150,8 +155,19 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       });
     });
   }
+  else if (info.menuItemId === "open-in-nocookies") {
+    console.log("Context-click on URL: "+info.linkUrl)
+    if (info.linkUrl.includes("youtube.com/watch")) {
+      const params = new URLSearchParams(info.linkUrl);
+      const videoId = params.get('v');
+      console.log("VideoId"+videoId+params+ typeof info.linkUrl)
+      if (videoId) {
+        const targetUrl = `https://youtube.com/watch?v=${videoId}&themeRefresh=1${timestamp}`;
+        browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
+        window.location.create(targetUrl)
+    }}}
   
-  });
+});
 
 
 function redirectYouTubeTab(tabId) {
