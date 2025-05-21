@@ -5,6 +5,6 @@ A Firefox extension that can switch between the youtube player and a cookie-free
 ## TODO
 
 - Add option to auto-redirect (AJAX is causing issues).
-- Implement tab history preservation during switches.
+- Change Contextmenu for opening in new tab to arrow select (New tab and current tab)
 
 ## Errors

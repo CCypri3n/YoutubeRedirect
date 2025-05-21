@@ -73,7 +73,7 @@ function rebuildContextMenus(state) {
     }
     browser.contextMenus.create({
       id: "open-in-nocookies",
-      title: "Open video in a new nocookies tab",
+      title: "Open without cookies / ads",
       contexts: ["link"]
     })
   });
@@ -158,16 +158,22 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   else if (info.menuItemId === "open-in-nocookies") {
     console.log("Context-click on URL: "+info.linkUrl)
     if (info.linkUrl.includes("youtube.com/watch")) {
-      const params = new URLSearchParams(info.linkUrl);
+      const params = new URLSearchParams(info.linkUrl.split('?')[1]);
       const videoId = params.get('v');
       console.log("VideoId"+videoId+params+ typeof info.linkUrl)
       if (videoId) {
-        const targetUrl = `https://youtube.com/watch?v=${videoId}&themeRefresh=1${timestamp}`;
-        browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
-        window.location.create(targetUrl)
-    }}}
-  
-});
+        const options = browser.storage.local.get({
+          hl: 'en',
+          cc_lang: 'en',
+          cc_load_policy: 1,
+          theme: 'dark',
+          preserve_timestamp: 0,
+          tab_history: 0,
+        }).then((result) => {
+          const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${options.theme}&hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}`;
+          browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
+          browser.tabs.create({url: targetUrl})
+    })}}}});
 
 
 function redirectYouTubeTab(tabId) {
