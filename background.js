@@ -169,10 +169,17 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
           theme: 'dark',
           preserve_timestamp: 0,
           tab_history: 0,
+          context_right_click: 1,
         }).then((result) => {
-          const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${options.theme}&hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}`;
-          browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
-          browser.tabs.create({url: targetUrl})
+          const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${result.theme}&hl=${result.hl}&cc_lang_pref=${result.cc_lang}&cc_load_policy=${result.cc_load_policy}`;
+         console.log(`targetUrl: ${targetUrl} and right_click to ${result.context_right_click + typeof result.context_right_click}`);
+          
+          if (Number(result.context_right_click)) {
+            browser.tabs.update({url: targetUrl})
+          }
+          else {
+            browser.tabs.create({url: targetUrl})
+          }
     })}}}});
 
 
