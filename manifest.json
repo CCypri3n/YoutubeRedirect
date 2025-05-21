@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "YouTube Swapper",
-    "version": "1.5",
+    "version": "2.0",
     "description": "Switch youtube video players, between the default one and a privacy-focused ad-free version.",
     "permissions": [
       "contextMenus",
@@ -11,7 +11,10 @@
       "*://www.youtube-nocookie.com/*",
       "*://www.m.youtube.com/*",
       "storage",
-      "notifications"
+      "notifications",
+      "cookies",
+      "webRequest",
+      "webRequestBlocking"
     ],
     "browser_action": {
       "default_title": "Swap YouTube Player",

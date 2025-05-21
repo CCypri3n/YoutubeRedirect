@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <title>YouTube Swapper V1.4</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="icons/icon-96.png">
 </head>
 <body>
   <h1>YouTubeSwitch settings</h1>
@@ -52,7 +53,7 @@
   <select id="preserve_timestamp">
     <option value=0>off</option>
     <option value=1>on</option>
-  </select><br/>
+  </select><br/><br/>
 
   <label for="tab_history">Preserve tab history on switch: </label>
   <select id="tab_history">
@@ -61,14 +62,7 @@
   </select><br/>
   <label class="attention">(This feature ist intended to keep the youtube-video in your tab history.)</label><br/><br/>
   
-  <label for="context_right_click">On right-click open video in </label>
-  <select id="context_right_click">
-    <option value=0>new tab</option>
-    <option value=1>current tab</option>
-  </select><br/>
-  <label class="attention">(Beta feature, may cause issues)</label><br/><br/>
-  
-  
+
   <label for="download_policy">Download videos with https://notube.lol/: </label>
   <select id="download_policy">
     <option value=0>off</option>
@@ -92,9 +86,6 @@
     </select>
     <br/><br/>
   </div>
-    
-  <input type="checkbox" id="close_settings" checked="on" checked>
-  <label for="close_settings"> Close settings on save?</label><br/><br/>
 
   <button id="saveBtn" class="button">Save</button><br/><br/>
   <div id="status"></div>

@@ -47,34 +47,71 @@ function rebuildContextMenus(state) {
     browser.contextMenus.create({
       id: "open-options",
       title: "Open Settings",
-      contexts: ["browser_action"]
+      contexts: ["browser_action"],
+      icons: {
+        "16": "icons/tune16.png"
+      }
     });
-    browser.contextMenus.create({
-      id: "url-github",
-      title: "Support me on Github",
-      contexts: ["browser_action"]
-    });
+
     browser.contextMenus.create({
       id: "toggle-subtitles",
       title: state.cc_load_policy === 1 ? "Turn Subtitles Off" : "Turn Subtitles On",
-      contexts: ["browser_action"]
+      contexts: ["browser_action"],
+      icons: {
+        "16": state.cc_load_policy === 1 ? "icons/closed_captions_off16.png" : "icons/closed_captions16.png"
+      }
     });
     browser.contextMenus.create({
       id: "toggle-notifications",
       title: state.notifications_allowed === 1 ? "Do not disturb" : "Do disturb",
-      contexts: ["browser_action"]
+      contexts: ["browser_action"],
+      icons: {
+        "16": state.notifications_allowed === 1 ? "icons/notifications_off16.png" : "icons/notifications16.png"
+      }
     });
     if (state.download_policy === 1) {
       browser.contextMenus.create({
         id: "download-video",
         title: "Download Video",
-        contexts: ["browser_action"]
+        contexts: ["browser_action"],
+        icons: {
+          "16": "icons/download16.png"
+        }
       });
     }
+
+    browser.contextMenus.create({
+      id: "url-github",
+      title: "Support me on Github",
+      contexts: ["browser_action"],
+      icons: {
+        "16": "icons/github16.png"
+      }
+    });
+
     browser.contextMenus.create({
       id: "open-in-nocookies",
       title: "Open without cookies / ads",
       contexts: ["link"]
+    })
+
+    browser.contextMenus.create({
+      id: "open-in-current-tab",
+      title: "in this tab",
+      parentId: "open-in-nocookies",
+      contexts: ["link"],
+      icons: {
+        "16": "icons/tab16.png"
+      }
+    })
+    browser.contextMenus.create({
+      id: "open-in-new-tab",
+      title: "in a new tab",
+      parentId: "open-in-nocookies",
+      contexts: ["link"],
+      icons: {
+        "16": "icons/tab_new16.png"
+      }
     })
   });
 }
@@ -90,6 +127,57 @@ function getCurrentStateAndRebuildMenus() {
 // On extension startup:
 getCurrentStateAndRebuildMenus();
 
+
+// Remove any pre-existing cookies for that domain
+browser.cookies.getAll({ domain: "youtube-nocookie.com" }).then(cookies => {
+  for (const cookie of cookies) {
+    browser.cookies.remove({
+      url: "https://" + cookie.domain + cookie.path,
+      name: cookie.name,
+      storeId: cookie.storeId
+    });
+  }
+});
+
+function redirectYouTubeTab(tabId) {
+  browser.tabs.executeScript(tabId, { file: "redirect.js" })
+    .catch(err => console.error("Failed to inject script:", err));
+}
+
+function notify(title, content) {
+    browser.storage.local.get({ notifications_allowed: 1 })
+    .then(options => {
+        if (options.notifications_allowed==1) {
+            browser.notifications.create({
+                type: "basic",
+                iconUrl: browser.extension.getURL("icons/icon-48.png"),
+                title,
+                message: content,
+              });
+        }
+        else {
+            console.log(`Notfications are turned off - No notifcations with title "${title}" and content "${content}" send`)
+        }
+    });
+}
+
+
+// Listeners
+
+
+// Block setting of cookies on requests
+browser.webRequest.onHeadersReceived.addListener(
+  function(details) {
+    // Remove any Set-Cookie header from responses
+    details.responseHeaders = details.responseHeaders.filter(
+      h => h.name.toLowerCase() !== "set-cookie"
+    );
+    return { responseHeaders: details.responseHeaders };
+  },
+  { urls: ["*://www.youtube-nocookie.com/*"] },
+  ["blocking", "responseHeaders"]
+);
+
 // On settings change:
 browser.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && (
@@ -102,17 +190,18 @@ browser.storage.onChanged.addListener((changes, area) => {
 });
 
 
-
-
 //handle contextMenu clicks
 browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "open-options") { //Open Settings
-    // Open the options page
-    if (browser.runtime.openOptionsPage) {
-      browser.runtime.openOptionsPage();
-    } else {
-      window.open(browser.runtime.getURL("options.html"));
-    }
+    // Open the options page in a popup window (400x600 is a nice size, adjust as needed)
+    browser.windows.create({
+      url: browser.runtime.getURL("options.html"),
+      type: "popup",
+      width: 500,
+      height: 800,
+      top: 100,
+      left: 100
+    });
   }
   else if (info.menuItemId === "toggle-subtitles") {
     // Read current state
@@ -155,7 +244,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       });
     });
   }
-  else if (info.menuItemId === "open-in-nocookies") {
+  else if (info.menuItemId === "open-in-new-tab" || info.menuItemId === "open-in-current-tab") {
     console.log("Context-click on URL: "+info.linkUrl)
     if (info.linkUrl.includes("youtube.com/watch")) {
       const params = new URLSearchParams(info.linkUrl.split('?')[1]);
@@ -169,12 +258,11 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
           theme: 'dark',
           preserve_timestamp: 0,
           tab_history: 0,
-          context_right_click: 1,
         }).then((result) => {
           const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${result.theme}&hl=${result.hl}&cc_lang_pref=${result.cc_lang}&cc_load_policy=${result.cc_load_policy}`;
-         console.log(`targetUrl: ${targetUrl} and right_click to ${result.context_right_click + typeof result.context_right_click}`);
-          
-          if (Number(result.context_right_click)) {
+         console.log(`targetUrl: ${targetUrl}`);
+
+          if (info.menuItemId === "open-in-current-tab") {
             browser.tabs.update({url: targetUrl})
           }
           else {
@@ -183,29 +271,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     })}}}});
 
 
-function redirectYouTubeTab(tabId) {
-  browser.tabs.executeScript(tabId, { file: "redirect.js" })
-    .catch(err => console.error("Failed to inject script:", err));
-}
-
-function notify(title, content) {
-    browser.storage.local.get({ notifications_allowed: 1 })
-    .then(options => {
-        if (options.notifications_allowed==1) {
-            browser.notifications.create({
-                type: "basic",
-                iconUrl: browser.extension.getURL("icons/icon-48.png"),
-                title,
-                message: content,
-              });
-        }
-        else {
-            console.log(`Notfications are turned off - No notifcations with title "${title}" and content "${content}" send`)
-        }
-    });
-}
-
-
+// Listener for the "actionclick"
 browser.browserAction.onClicked.addListener((tab) => {
   if (tab.url.includes("youtube.com/watch") || tab.url.includes("youtube-nocookie.com")) {
     console.log(`Button clicked, running redirect.js on ${tab.id}`);
@@ -216,6 +282,7 @@ browser.browserAction.onClicked.addListener((tab) => {
   }
 });
 
+// Listener for messages from other scripts
 browser.runtime.onMessage.addListener((message, sender, sendReponse) => {
     if (message.log) {
       console.log("From content script:", message.log);
@@ -234,3 +301,15 @@ browser.runtime.onMessage.addListener((message, sender, sendReponse) => {
       getCurrentStateAndRebuildMenus();
     }
   })
+
+// Listener for install / updates
+browser.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    // Open the options/settings page when the extension is first installed
+    if (browser.runtime.openOptionsPage) {
+      browser.runtime.openOptionsPage();
+    } else {
+      window.open(browser.runtime.getURL("options.html"));
+    }
+  }
+});

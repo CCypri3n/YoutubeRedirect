@@ -19,15 +19,12 @@ function saveOptions() {
   const download_format = document.getElementById('download_format').value;
   const preserve_timestamp = document.getElementById('preserve_timestamp').value;
   const tab_history = document.getElementById('tab_history').value;
-  const context_right_click = document.getElementById('context_right_click').value;
 
-  browser.storage.local.set({ hl, cc_lang, cc_load_policy, theme, notifications_allowed, download_policy, download_format, preserve_timestamp, tab_history, context_right_click }).then(() => {
+  browser.storage.local.set({ hl, cc_lang, cc_load_policy, theme, notifications_allowed, download_policy, download_format, preserve_timestamp, tab_history }).then(() => {
     const status = document.getElementById('status');
     status.textContent = 'Options saved.';
     browser.runtime.sendMessage({ action: "rebuild-context-menus" });
-    const close_settings = document.getElementById('close_settings').checked;
-    browser.runtime.sendMessage({ log: `${close_settings}`})
-    if (close_settings) {
+    if (window.opener) {
       window.close();
     }
     else {
@@ -36,7 +33,7 @@ function saveOptions() {
     }, 2000);
     }
   });
-  browser.runtime.sendMessage({ log: `Options updated to ${hl + cc_lang + cc_load_policy + theme + notifications_allowed + download_policy + download_format + preserve_timestamp + tab_history + context_right_click}` });
+  browser.runtime.sendMessage({ log: `Options updated to ${hl + cc_lang + cc_load_policy + theme + notifications_allowed + download_policy + download_format + preserve_timestamp + tab_history}` });
 }
 
 function restoreOptions() {
@@ -50,7 +47,6 @@ function restoreOptions() {
     download_format: 'mp4',
     preserve_timestamp: 1,
     tab_history: 1,
-    context_right_click: 1,
   }).then((result) => {
     document.getElementById('hl').value = result.hl;
     document.getElementById('cc_lang').value = result.cc_lang;
@@ -61,7 +57,6 @@ function restoreOptions() {
     document.getElementById('download_format').value = result.download_format;
     document.getElementById('tab_history').value = result.tab_history;
     document.getElementById('preserve_timestamp').value = result.preserve_timestamp;
-    document.getElementById('context_right_click').value = result.context_right_click;
     browser.runtime.sendMessage({ action: "rebuild-context-menus" });; // <- THIS ENSURES VISIBILITY IS UPDATED
     updateDownloadOptionsVisibility();
   });
