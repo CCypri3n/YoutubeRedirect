@@ -91,7 +91,7 @@ function rebuildContextMenus(state) {
 
     browser.contextMenus.create({
       id: "open-in-nocookies",
-      title: "Open without cookies / ads",
+      title: "Open without cookies and ads",
       contexts: ["link"]
     })
 
@@ -113,6 +113,13 @@ function rebuildContextMenus(state) {
         "16": "icons/tab_new16.png"
       }
     })
+    if (state.download_policy === 1) {
+      browser.contextMenus.create({
+        id: "download-video-url",
+        title: "Download video",
+        contexts: ["link"]
+      })
+    }
   });
 }
 
@@ -161,6 +168,22 @@ function notify(title, content) {
     });
 }
 
+function extractYouTubeVideoId(url) {
+  try {
+    // Handle both "watch?v=" and "/embed/"
+    if (url.includes('/watch')) {
+      const params = new URLSearchParams(url.split('?')[1]);
+      return params.get('v');
+    } else if (url.includes('/embed/')) {
+      const path = new URL(url).pathname;
+      return path.split('/embed/')[1];
+    }
+  } catch (e) {
+    // Invalid URL
+    return null;
+  }
+  return null;
+}
 
 // Listeners
 
@@ -268,7 +291,19 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
           else {
             browser.tabs.create({url: targetUrl})
           }
-    })}}}});
+    })}}}
+  else if (info.menuItemId === "download-video-url") {
+    console.log("Context-click on URL: "+info.linkUrl);
+    const videoId = extractYouTubeVideoId(info.linkUrl);
+    if (videoId) {
+      browser.tab.create({url: `https://notube.lol/?video=${encodeURIComponent(videoId)}`});
+    }
+    else {
+      notify("Cannot download", "This is not a valid youtube video.")
+    }
+    
+  }
+});
 
 
 // Listener for the "actionclick"
