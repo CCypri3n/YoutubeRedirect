@@ -217,14 +217,7 @@ browser.storage.onChanged.addListener((changes, area) => {
 browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "open-options") { //Open Settings
     // Open the options page in a popup window (400x600 is a nice size, adjust as needed)
-    browser.windows.create({
-      url: browser.runtime.getURL("options.html"),
-      type: "popup",
-      width: 500,
-      height: 800,
-      top: 100,
-      left: 100
-    });
+    browser.tabs.create({url: browser.runtime.getURL("options.html")}) 
   }
   else if (info.menuItemId === "toggle-subtitles") {
     // Read current state
@@ -296,7 +289,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     console.log("Context-click on URL: "+info.linkUrl);
     const videoId = extractYouTubeVideoId(info.linkUrl);
     if (videoId) {
-      browser.tab.create({url: `https://notube.lol/?video=${encodeURIComponent(videoId)}`});
+      browser.tabs.create({url: `https://notube.lol/?video=${encodeURIComponent(videoId)}`});
     }
     else {
       notify("Cannot download", "This is not a valid youtube video.")
