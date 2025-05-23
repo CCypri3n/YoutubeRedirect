@@ -339,12 +339,12 @@ browser.runtime.onMessage.addListener((message, sender, sendReponse) => {
 
 // Listener for install / updates
 browser.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install") {
+  if (details.reason === "install" || details.reason === "update") {
     // Open the options/settings page when the extension is first installed
     if (browser.runtime.openOptionsPage) {
-      browser.runtime.openOptionsPage();
+      window.open("https://github.com/CCypri3n/YoutubeRedirect/blob/main/README.md#-youtubeswapper");
     } else {
-      window.open(browser.runtime.getURL("options.html"));
+      window.open("https://github.com/CCypri3n/YoutubeRedirect/blob/main/README.md#-youtubeswapper");
     }
   }
 });
