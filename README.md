@@ -8,16 +8,6 @@ A Firefox extension for privacy-first YouTube watching, auto-redirection to yout
 - ⬇️ Download integration with notube.lol (optional, at your own risk)
 - 🔒 Privacy-focused: no telemetry, no ads, fully local storage of preferences
 
-
-## 📥 Installation
-- For stable permanent version:
-  - Use https://addons.mozilla.org/en-US/firefox/addon/youtubeswapper/
-
-- For development:
-  - Navigate to about:debugging#/runtime/this-firefox
-  - Click Load Temporary Add-on
-  - Select manifest.json from this repository
-
 ## 🚀 Usage
 - When browsing YouTube videos, right-click a video for quick-access to the privacy-friendly nocookie player
 - Use the extension icon’s context menu for quick toggles and downloads.
@@ -27,6 +17,15 @@ A Firefox extension for privacy-first YouTube watching, auto-redirection to yout
 ## ⚙️ Advanced
 - 🔐 For enhanced privacy, block all cookies from youtube-nocookie.com through Firefox’s site settings (YoutubeSwapper deletes cookies from youtube-nocookie automatically).
 - 🔄 Reset extension settings by running await browser.storage.local.clear() in your extension’s debug console (about:debugging).
+
+## 📥 Installation
+- For a stable permanent version:
+  - Use https://addons.mozilla.org/en-US/firefox/addon/youtubeswapper/
+
+- For development:
+  - Navigate to about:debugging#/runtime/this-firefox
+  - Click Load Temporary Add-on
+  - Select manifest.json from this repository
 
 ## 🛠 Development Notes
 - Built with Firefox WebExtension APIs, manifest v2.
