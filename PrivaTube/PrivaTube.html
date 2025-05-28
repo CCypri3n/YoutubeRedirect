@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SearchTube Beta</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="icons/icon-96.png">
+</head>
+<body>
+    <header class="main-header" onclick="showHomepage()" style="cursor:pointer;">
+        <h1>SearchTube</h1>
+        <h5>by YoutubeSwapper</h5>
+    </header>
+
+    <div class="country-dropdown" id="country-dropdown">
+    <button id="country-code-btn">FR ▼</button>
+    <div class="country-list" id="country-list">
+        <div data-code="FR">🇫🇷 France</div>
+        <div data-code="DE">🇩🇪 Germany</div>
+        <div data-code="GB">🇬🇧 Britain</div>
+        <div data-code="ES">🇪🇸 Spain</div>
+        <div data-code="US">🇺🇸 USA</div>
+    </div>
+    </div>
+
+
+    <div class="search-bar-wrapper">
+        <div class="search-container">
+            <input type="text" id="searchQuery" class="search-input" placeholder="Type to search...">
+            <button class="search-btn" id="search-btn">
+              <img src="icons/search-96.svg" alt="Search" style="width:24px;height:24px;">
+            </button>
+        </div>
+    </div>
+
+    <div id="channel-banner" style="display:none;"></div>
+
+    <div id="results" class="video-grid"></div>
+
+    <div id="load-more-wrapper">
+        <button id="load-more-btn" style="display:none;">Load More</button>
+    </div>
+
+    <script src="PrivaTube.js"></script>
+    <div id="api-key-modal" style="display:none;">
+      <div class="api-key-modal-backdrop"></div>
+      <div class="api-key-modal-content">
+        <h2>Enter your YouTube API Key</h2>
+        <input type="text" id="api-key-input" placeholder="Paste your API key here">
+        <button id="api-key-save-btn">Save</button>
+        <p class="attention" style="margin-top:8px;">Your key is stored only in your browser.</p>
+      </div>
+    </div>
+
+</body>
+</html>

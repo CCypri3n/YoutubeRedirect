@@ -1,13 +1,63 @@
 //options.js 
 
+// ...existing code...
+
+let apiKeyVisible = false;
+
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('saveBtn').addEventListener('click', saveOptions);
 
   // Set up the change listener for dynamic option visibility
   document.getElementById('download_policy').addEventListener('change', updateDownloadOptionsVisibility);
 
+  // Add toggle button listener
+  document.getElementById('toggleApiKeyBtn').addEventListener('click', function() {
+    apiKeyVisible = !apiKeyVisible;
+    updateApiKeyVisibility();
+  });
+
   restoreOptions(); // Restore all options and update visibility
 });
+
+function restoreOptions() {
+  browser.storage.local.get({
+    // ...existing defaults...
+    api_key: "",
+  }).then((result) => {
+    // ...existing code...
+    storedApiKey = result.api_key || "";
+    apiKeyVisible = false;
+    updateApiKeyDisplay();
+    // ...existing code...
+  });
+}
+
+function updateDownloadOptionsVisibility() {
+  const val = Number(document.getElementById('download_policy').value);
+  document.getElementById('downloadOptions').style.display = (val === 1) ? 'block' : 'none';
+}
+
+function updateApiKeyVisibility() {
+  const apiKeyLabel = document.getElementById('apiKey');
+  const toggleBtn = document.getElementById('toggleApiKeyBtn');
+  browser.storage.local.get({
+    api_key: 0,
+  }).then((result) => {
+  storedApiKey = document.getElementById('apiKey').textContent = result.api_key || "(not set)";
+  if (!storedApiKey) {
+    apiKeyLabel.textContent = "(not set)";
+    toggleBtn.style.display = "none";
+  } else if (apiKeyVisible) {
+    apiKeyLabel.textContent = storedApiKey;
+    toggleBtn.textContent = "Hide";
+    toggleBtn.style.display = "inline";
+  } else {
+    apiKeyLabel.textContent = "••••••••••••••••";
+    toggleBtn.textContent = "Show";
+    toggleBtn.style.display = "inline";
+  }
+})}
+
 
 function saveOptions() {
   const hl = document.getElementById('hl').value;
@@ -47,6 +97,7 @@ function restoreOptions() {
     download_format: 'mp4',
     preserve_timestamp: 1,
     tab_history: 1,
+    api_key: 0,
   }).then((result) => {
     document.getElementById('hl').value = result.hl;
     document.getElementById('cc_lang').value = result.cc_lang;
@@ -59,10 +110,6 @@ function restoreOptions() {
     document.getElementById('preserve_timestamp').value = result.preserve_timestamp;
     browser.runtime.sendMessage({ action: "rebuild-context-menus" });; // <- THIS ENSURES VISIBILITY IS UPDATED
     updateDownloadOptionsVisibility();
+    updateApiKeyVisibility();
   });
-}
-
-function updateDownloadOptionsVisibility() {
-  const val = Number(document.getElementById('download_policy').value);
-  document.getElementById('downloadOptions').style.display = (val === 1) ? 'block' : 'none';
 }

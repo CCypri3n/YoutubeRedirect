@@ -79,7 +79,6 @@ function rebuildContextMenus(state) {
         }
       });
     }
-
     browser.contextMenus.create({
       id: "url-github",
       title: "Support me on Github",
@@ -305,8 +304,7 @@ browser.browserAction.onClicked.addListener((tab) => {
     console.log(`Button clicked, running redirect.js on ${tab.id}`);
     redirectYouTubeTab(tab.id);
   } else {
-    notify("Extension not applicable", "This extension only works on youtube.com and youtube-nocookie.com.");
-    console.log("This button only works on YouTube or youtube-nocookie video pages.");
+    browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
   }
 });
 
