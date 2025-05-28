@@ -326,6 +326,9 @@ browser.runtime.onMessage.addListener((message, sender, sendReponse) => {
     if (message.action === "rebuild-context-menus") {
       getCurrentStateAndRebuildMenus();
     }
+    else if (message.action === "openPrivaTube") {
+    browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
+  }
   })
 
 // Listener for install / updates

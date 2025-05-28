@@ -1,48 +1,48 @@
 {
-    "manifest_version": 2,
-    "name": "YouTube Swapper",
-    "version": "2.4",
-    "description": "Switch Youtube with a privacy-focused ad-free version.",
-    "permissions": [
-      "contextMenus",
-      "tabs",
-      "activeTab",
-      "*://www.youtube.com/*",
-      "*://www.youtube-nocookie.com/*",
-      "*://www.m.youtube.com/*",
-      "storage",
-      "notifications",
-      "cookies",
-      "webRequest",
-      "webRequestBlocking"
-    ],
-    "browser_action": {
-      "default_title": "Swap YouTube Player",
-      "default_icon": {
-        "48": "icons/icon-48.png",
-        "96": "icons/icon-96.png"
-      }
-    },
-    "background": {
-      "scripts": ["background.js"]
-    },
-    "browser_specific_settings": {
-  "gecko": {
-    "id": "cython.chev@gmail.com"
-        }
-    },
-    "icons": {
-        "48": "icons/icon-48.png",
-        "96": "icons/icon-96.png"
-    },
-    "options_ui": {
-      "page": "options.html",
-      "open_in_tab": true
-    },
-"content_scripts": [
-  {
-    "matches": ["https://notube.lol/*"],
-    "js": ["notube-inject.js"],
-    "run_at": "document_end"
-  }]
+  "manifest_version": 2,
+  "name": "YouTube Swapper",
+  "version": "2.4",
+  "description": "Switch between Youtube and a privacy-focused (nearly) ad-free version.",
+  "permissions": [
+    "contextMenus",
+    "tabs",
+    "activeTab",
+    "*://www.youtube.com/*",
+    "*://www.youtube-nocookie.com/*",
+    "*://www.m.youtube.com/*",
+    "storage",
+    "notifications",
+    "cookies",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "browser_action": {
+    "default_title": "Swap YouTube Player",
+    "default_icon": {
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cython.chev@gmail.com"
+    }
+  },
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://notube.lol/*"],
+      "js": ["notube-inject.js"],
+      "run_at": "document_end"
+    }]
 }
