@@ -81,3 +81,56 @@ h1 {
     }
   }
   
+  /* ...existing code... */
+
+.api-key-input {
+  width: 340px;           /* Adjust as needed for your API key length */
+  max-width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin-right: 8px;
+  background: #fff;
+  color: #222;
+  transition: border-color 0.2s;
+}
+
+.api-key-input:focus {
+  border-color: crimson;
+  outline: none;
+}
+
+#toggleApiKeyBtn {
+  padding: 10px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: crimson;
+  color: white;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+#toggleApiKeyBtn:hover {
+  box-shadow: 0 4px 12px 0 rgba(220,20,60,0.18);
+}
+
+/* Dark mode for input/button */
+@media (prefers-color-scheme: dark) {
+  .api-key-input {
+    background: #222;
+    color: #eee;
+    border: 1px solid #444;
+  }
+  #toggleApiKeyBtn {
+    background-color: crimson;
+    color: #fff;
+  }
+}
+
+#apiKeyContainer {
+  display: flex;
+  align-items: center;
+}

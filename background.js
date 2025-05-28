@@ -52,6 +52,14 @@ function rebuildContextMenus(state) {
         "16": "icons/tune16.png"
       }
     });
+    browser.contextMenus.create({
+      id: "open-PrivaTube",
+      title: "Open PrivaTube",
+      contexts: ["browser_action"],
+      icons: {
+        "16": "icons/PrivaTube16.png"
+      }
+    });
 
     browser.contextMenus.create({
       id: "toggle-subtitles",
@@ -79,7 +87,6 @@ function rebuildContextMenus(state) {
         }
       });
     }
-
     browser.contextMenus.create({
       id: "url-github",
       title: "Support me on Github",
@@ -294,7 +301,9 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     else {
       notify("Cannot download", "This is not a valid youtube video.")
     }
-    
+  }
+  else if (info.menuItemId === "open-PrivaTube") {
+    browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
   }
 });
 
@@ -305,8 +314,7 @@ browser.browserAction.onClicked.addListener((tab) => {
     console.log(`Button clicked, running redirect.js on ${tab.id}`);
     redirectYouTubeTab(tab.id);
   } else {
-    notify("Extension not applicable", "This extension only works on youtube.com and youtube-nocookie.com.");
-    console.log("This button only works on YouTube or youtube-nocookie video pages.");
+    browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
   }
 });
 
@@ -328,6 +336,9 @@ browser.runtime.onMessage.addListener((message, sender, sendReponse) => {
     if (message.action === "rebuild-context-menus") {
       getCurrentStateAndRebuildMenus();
     }
+    else if (message.action === "openPrivaTube") {
+    browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
+  }
   })
 
 // Listener for install / updates
