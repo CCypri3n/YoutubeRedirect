@@ -52,6 +52,14 @@ function rebuildContextMenus(state) {
         "16": "icons/tune16.png"
       }
     });
+    browser.contextMenus.create({
+      id: "open-PrivaTube",
+      title: "Open PrivaTube",
+      contexts: ["browser_action"],
+      icons: {
+        "16": "icons/PrivaTube16.png"
+      }
+    });
 
     browser.contextMenus.create({
       id: "toggle-subtitles",
@@ -293,7 +301,9 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     else {
       notify("Cannot download", "This is not a valid youtube video.")
     }
-    
+  }
+  else if (info.menuItemId === "open-PrivaTube") {
+    browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
   }
 });
 

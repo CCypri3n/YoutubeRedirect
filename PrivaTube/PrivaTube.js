@@ -44,8 +44,16 @@ async function filterOutShorts(videoItems) {
 
 // --- Fetch API Key from Key.txt ---
 // --- API Key Modal Logic ---
-function promptForApiKey() {
+function promptForApiKey(errorMsg = "") {
   const modal = document.getElementById('api-key-modal');
+  const errorDiv = document.getElementById('api-key-error');
+  if (errorMsg) {
+    errorDiv.textContent = errorMsg;
+    errorDiv.style.display = 'block';
+  } else {
+    errorDiv.textContent = "";
+    errorDiv.style.display = 'none';
+  }
   modal.style.display = 'flex';
   document.getElementById('api-key-input').focus();
 
@@ -56,30 +64,33 @@ function promptForApiKey() {
         browser.runtime.sendMessage({ log: `The API Key was stored: ${api_key}`});
         API_KEY = api_key;
         modal.style.display = 'none';
-        // Reload the page or re-init
-        location.reload(); // simplest way
+        location.reload();
       });
     }
   };
 }
 
-// --- Fetch API Key from localStorage or Key.txt ---
 async function fetchApiKey() {
-  // Always prompt for API key on GitHub Pages
   const result = await browser.storage.local.get({ api_key: '' });
   API_KEY = result.api_key;
   browser.runtime.sendMessage({ log: `API Key fetched: ${API_KEY}` });
   if (!API_KEY) {
     browser.runtime.sendMessage({ log: `This doesn't exist: ${API_KEY}` });
     promptForApiKey();
-    // Return a promise that never resolves, to halt further init until key is set
     return new Promise(() => {});
   } else {
     browser.runtime.sendMessage({ log: `This does exist: ${API_KEY}` });
+    // Check if the API key is valid by making a simple request
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${API_KEY}`);
+    if (!response.ok) {
+      browser.runtime.sendMessage({ log: 'Invalid API Key detected, prompting user.' });
+      promptForApiKey("Invalid API Key. Please enter a valid YouTube Data API key.");
+      return new Promise(() => {});
+    }
+    browser.runtime.sendMessage({ log: `API Key is valid: ${API_KEY}` });
     return API_KEY;
   }
 }
-
 
 
 // --- Homepage Trending Videos ---
@@ -265,20 +276,19 @@ function appendResults(items) {
 
 function renderResultItem(item) {
   if (item.id.kind === "youtube#video") {
-    // Format date as "YYYY-MM-DD" or any other style you prefer
     const dateStr = item.snippet.publishedAt
       ? new Date(item.snippet.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
       : '';
     return `
         <div class="video-item">
-            <a href="https://www.youtube-nocookie.com/embed/${item.id.videoId}"  rel="noopener">
+            <a href="https://www.youtube-nocookie.com/embed/${item.id.videoId}" rel="noopener">
             <img src="${item.snippet.thumbnails.medium.url}" alt="${item.snippet.title}" />
             </a>
             <h3>${item.snippet.title}</h3>
             <div class="video-meta">
             <span class="video-date">${dateStr}</span>
             <span class="video-meta-sep">&nbsp;•&nbsp;</span>
-            <a href="#" class="channel-link" onclick="fetchChannelVideos('${item.snippet.channelId}'); return false;">
+            <a href="#" class="channel-link" data-channel-id="${item.snippet.channelId}">
                 ${item.snippet.channelTitle}
             </a>
             </div>
@@ -286,7 +296,7 @@ function renderResultItem(item) {
         `;
   } else if (item.id.kind === "youtube#channel") {
     return `
-      <div class="channel-item" data-channel-id="${item.id.channelId}" onclick="fetchChannelVideos('${item.id.channelId}')">
+      <div class="channel-item" data-channel-id="${item.id.channelId}">
         <img src="${item.snippet.thumbnails.medium.url}" alt="${item.snippet.title}" />
         <h3>${item.snippet.title}</h3>
         <p class="attention">Click to view channel videos</p>
@@ -296,7 +306,6 @@ function renderResultItem(item) {
     return '';
   }
 }
-
 
 
 // --- Show/hide Load More button ---
@@ -367,4 +376,19 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchChannelVideos(lastChannelId, true);
     }
   });
+  document.getElementById('results').addEventListener('click', function(event) {
+  // Handle channel-item (channel search results)
+  const channelDiv = event.target.closest('.channel-item');
+  if (channelDiv && channelDiv.dataset.channelId) {
+    fetchChannelVideos(channelDiv.dataset.channelId);
+    return;
+  }
+  // Handle channel-link (video meta)
+  const channelLink = event.target.closest('.channel-link');
+  if (channelLink && channelLink.dataset.channelId) {
+    event.preventDefault();
+    fetchChannelVideos(channelLink.dataset.channelId);
+    return;
+  }
+});
 });
