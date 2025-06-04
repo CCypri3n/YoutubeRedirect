@@ -44,5 +44,9 @@
       "matches": ["https://notube.lol/*"],
       "js": ["notube-inject.js"],
       "run_at": "document_end"
-    }]
+    }],
+  "web_accessible_resources": [
+      "PrivaTube.ssh"
+    ],
+  "content_security_policy": "script-src 'self' https://www.googleapis.com; object-src 'self';"
 }
