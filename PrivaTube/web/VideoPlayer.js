@@ -213,7 +213,7 @@ function linkify(text) {
   // Regex to match URLs (http/https)
   text = text.replace(
     /(https?:\/\/[^\s]+)/g,
-    (match, url) => `<a href="${browserUrl(url)}" target="_blank" rel="noopener noreferrer">${url}</a>`
+    (match, url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
   );
     // 2. Linkify local .html links with optional query parameters
   text = text.replace(
