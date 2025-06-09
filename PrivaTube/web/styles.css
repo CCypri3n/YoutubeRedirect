@@ -15,10 +15,8 @@ html, body {
     }
 
 /* Lower opacity when video is playing */
-body.video-playing .main-header,
-body.video-playing .country-dropdown,
-body.video-playing .search-bar-wrapper {
-  opacity: 0.35;
+body.video-playing .main-header {
+  opacity: 0.5;
   transition: opacity 0.2s;
   pointer-events: auto;
 }
@@ -27,6 +25,12 @@ body.video-playing .main-header:hover,
 body.video-playing .country-dropdown:hover,
 body.video-playing .search-bar-wrapper:hover {
   opacity: 1;
+}
+
+a {
+  color: #ff4b6e; /* Crimson color for links */
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 /* --- Header --- */
@@ -145,10 +149,28 @@ body.video-playing .search-bar-wrapper:hover {
   cursor: pointer;
   transition: box-shadow 0.2s, background 0.2s;
   text-align: center;
+  color: crimson;
+  text-decoration: none;
 }
+
 .channel-item:hover {
   background: rgba(220, 0, 0, 0.08);
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+a > .channel-item,
+a > .channel-item:hover,
+a > .channel-item:focus,
+a > .channel-item:active,
+a:visited > .channel-item {
+  text-decoration: none !important;
+  color: crimson;
+  outline: none;
+}
+
+a > .channel-item:focus {
+  outline: 2px solid crimson; /* for accessibility */
+  outline-offset: 2px;
 }
 
 
@@ -258,7 +280,7 @@ h1, h5 {
 
 #country-code-btn:hover,
 #country-code-btn.active {
-  background: rgba(128, 128, 128, 0.9);
+  background: crimson;
 }
 
 .country-list {
@@ -373,7 +395,7 @@ h1, h5 {
   text-decoration: underline;
 }
 
-.video-date {
+.video-date, .video-views-render {
   color: #bbb;
   font-size: 0.95em;
   margin-bottom: 1px;
@@ -522,14 +544,15 @@ h1, h5 {
   margin-bottom: 4px;
 }
 
-#video-stats .view-count,
+#video-stats,
 #video-stats .like-count {
   margin-bottom: 1vh;
   margin-left: 1%;
 }
+
 #video-description {
   margin-top: 8px;
-  margin-left: 1%;
+  margin-left: 2%;      /* Increase this value for more right padding */  /* Add left padding for inner spacing */
   color: #ccc;
   max-width: 90%;
   word-break: break-word;
@@ -537,16 +560,14 @@ h1, h5 {
 }
 
 #video-description a {
-  color: #b0b0b0;
-  text-decoration: underline;
+  color: crimson;
+  text-decoration: none;
   transition: color 0.2s;
   word-break: break-all;
 }
 #video-description a:hover {
   color: #fff;
-  text-decoration: underline;
 }
-
 
 .video-title {
   color: #fff;
@@ -554,13 +575,6 @@ h1, h5 {
   font-weight: bold;
   margin-bottom: 4px;
   margin-left: 1%;
-}
-
-#video-channel {
-  display: flex;
-  align-items: center;
-  margin-left: 1%;
-  margin-top: 1vh;
 }
 
 .channel-avatar {
@@ -672,4 +686,177 @@ h1, h5 {
   cursor: pointer;
   transition: color 0.15s;
   margin-bottom: 0px;
+}
+
+.video-thumb-container {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+}
+
+.video-thumb-container img {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.video-duration {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(30, 30, 30, 0.85);
+  color: #fff;
+  font-size: 0.98em;
+  font-weight: bold;
+  padding: 3px 10px 3px 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  pointer-events: none;
+  letter-spacing: 0.5px;
+  min-width: 38px;
+  text-align: center;
+}
+#video-channel {
+  display: flex;
+  align-items: center;
+  margin-left: 1%;
+  margin-top: 1vh;
+  gap: 18px;
+}
+
+.channel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.channel-action-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin-left: 8px;
+  margin-right: 0;
+  transition: background 0.2s;
+}
+
+.channel-like-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
+  opacity: 0.95;
+  vertical-align: middle;
+}
+
+.channel-likes {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1em;
+  gap: 6px;
+  padding: 0 10px;
+  background: transparent;
+  border: none;
+  cursor: default;
+  min-width: 0;
+  height: auto;
+  border-radius: 0;
+}
+
+.video-stat {
+  color: #bbb;
+  font-size: 1em;
+  margin-left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 4px;
+}
+#comment-action-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  margin-left: 1.5%;
+  margin-right: 2%;
+  gap: 12px;
+}
+
+.comment-count {
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.comment-sort-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#comment-sort-btn {
+  background: rgba(40,40,40,0.85);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px 6px 10px;
+  font-size: 1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s;
+}
+
+#comment-sort-btn:hover,
+#comment-sort-btn.active {
+  background: crimson;
+  color: #fff;
+}
+
+#comment-sort-label {
+  font-size: 1em;
+  font-weight: normal;
+}
+
+#comment-list {
+  display: none;
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: rgba(40, 40, 40, 0.97);
+  border-radius: 10px;
+  min-width: 140px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+  padding: 4px 0;
+  z-index: 10;
+}
+
+#comment-list div {
+  padding: 8px 18px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+  background: none;
+  transition: background 0.15s;
+}
+
+#comment-list div:hover {
+  background: rgba(220,0,0,0.15);
+  color: #fff;
 }

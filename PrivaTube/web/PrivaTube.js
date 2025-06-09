@@ -15,6 +15,27 @@ function parseDuration(isoDuration) {
   return minutes * 60 + seconds;
 }
 
+function parseDurationToVisual(duration) {
+    // Regular expression to parse the duration
+    const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+
+    if (!match) {
+        return "Invalid duration format";
+    }
+
+    // Extract hours, minutes, and seconds
+    const hours = parseInt(match[1]) || 0;
+    const minutes = parseInt(match[2]) || 0;
+    const seconds = parseInt(match[3]) || 0;
+
+    // Format to hh:mm:ss or mm:ss based on whether hours are present
+    if (hours > 0) {
+        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+}
+
 // Filter shorts from a list of video items using duration and #shorts in title/description
 // Filter shorts from a list of video items using duration and #shorts in title/description
 async function filterOutShorts(videoItems) {
@@ -46,45 +67,45 @@ function fetchApiKey() {
     const apiKey = results.api_key; // Correctly access the stored API key
     if (apiKey) {
       return Promise.resolve(apiKey.trim());
-    }
+  }
     return Promise.reject("API key not found.");
   }).catch(() => {
-    return new Promise((resolve, reject) => {
-      // Show modal and set up event listener for save button
-      const modal = document.getElementById('api-key-modal');
-      const errorDiv = document.getElementById('api-key-error');
-      modal.style.display = 'flex';
-      document.getElementById('api-key-input').focus();
+  return new Promise((resolve, reject) => {
+    // Show modal and set up event listener for save button
+    const modal = document.getElementById('api-key-modal');
+    const errorDiv = document.getElementById('api-key-error');
+    modal.style.display = 'flex';
+    document.getElementById('api-key-input').focus();
 
-      const onSave = async () => {
-        const api_key = document.getElementById('api-key-input').value.trim();
-        if (!api_key) {
-          errorDiv.textContent = "Please enter an API key.";
+    const onSave = async () => {
+      const api_key = document.getElementById('api-key-input').value.trim();
+      if (!api_key) {
+        errorDiv.textContent = "Please enter an API key.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+      try {
+        const testResp = await fetch(
+          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${api_key}`
+        );
+        if (!testResp.ok) {
+          errorDiv.textContent = "Invalid API Key. Please try again.";
           errorDiv.style.display = 'block';
           return;
         }
-        try {
-          const testResp = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${api_key}`
-          );
-          if (!testResp.ok) {
-            errorDiv.textContent = "Invalid API Key. Please try again.";
-            errorDiv.style.display = 'block';
-            return;
-          }
           browser.storage.local.set({ api_key }).then(() => {
-            API_KEY = api_key;
-            modal.style.display = 'none';
-            document.getElementById('api-key-save-btn').removeEventListener('click', onSave);
-            resolve(api_key);
+        API_KEY = api_key;
+        modal.style.display = 'none';
+        document.getElementById('api-key-save-btn').removeEventListener('click', onSave);
+        resolve(api_key);
           });
-        } catch (err) {
-          errorDiv.textContent = "Network error. Please try again.";
-          errorDiv.style.display = 'block';
-        }
-      };
+      } catch (err) {
+        errorDiv.textContent = "Network error. Please try again.";
+        errorDiv.style.display = 'block';
+      }
+    };
 
-      document.getElementById('api-key-save-btn').addEventListener('click', onSave);
+    document.getElementById('api-key-save-btn').addEventListener('click', onSave);
     });
   });
 }
@@ -130,9 +151,9 @@ async function showHomepage(loadMore = false) {
         snippet: item.snippet
       }));
     if (loadMore) {
-      appendResults(items);
+      displayResults(true, items);
     } else {
-      displayResults(items);
+      displayResults(false, items);
     }
     toggleLoadMoreButton(!!nextPageToken);
   } catch (error) {
@@ -191,9 +212,9 @@ async function searchVideos(loadMore = false) {
     const filteredVideos = await filterOutShorts(videoItems);
     const finalItems = [...filteredVideos, ...channelItems];
     if (loadMore) {
-      appendResults(finalItems, channelStats);
+      displayResults(true, finalItems, channelStats);
     } else {
-      displayResults(finalItems, channelStats);
+      displayResults(false, finalItems, channelStats);
     }
     toggleLoadMoreButton(!!nextPageToken);
   } catch (error) {
@@ -292,10 +313,10 @@ async function fetchChannelVideos(channelId, loadMore = false) {
     // Only show up to 24 videos per page
     const videosToShow = filteredVideos.slice(0, 24);
 
-    if (loadMore) {
-      appendResults(videosToShow);
+if (loadMore) {
+      displayResults(true, videosToShow);
     } else {
-      displayResults(videosToShow);
+      displayResults(false, videosToShow);
     }
     toggleLoadMoreButton(!!nextPageToken);
   } catch (err) {
@@ -309,32 +330,50 @@ async function fetchChannelVideos(channelId, loadMore = false) {
 
 
 // --- Results Rendering Helpers ---
-function displayResults(items, channelStats = {}) {
+async function displayResults(append, items, channelStats = {}) {
   const resultsDiv = document.getElementById('results');
   if (!items || items.length === 0) {
     resultsDiv.innerHTML = "<p>No results found.</p>";
     toggleLoadMoreButton(false);
     return;
   }
-  resultsDiv.innerHTML = items.map(item => renderResultItem(item, channelStats)).join('');
+  const videoItems = items.filter(item => item.id.kind === "youtube#video");
+  const videoIds = videoItems.map(item => item.id.videoId).join(',');
+  let videoStats = {};
+  if (videoIds) {
+    const statsResp = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id=${videoIds}&key=${API_KEY}`
+    );
+    const statsData = await statsResp.json();
+    statsData.items.forEach(v => {
+      videoStats[v.id] = v;
+    });
+  }
+  if (append) {
+    resultsDiv.innerHTML += items.map(item => renderResultItem(item, channelStats, videoStats)).join('');
+  }
+  else {
+    resultsDiv.innerHTML = items.map(item => renderResultItem(item, channelStats, videoStats)).join('');
+  }
 }
 
-function appendResults(items, channelStats = {}) {
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML += items.map(item => renderResultItem(item, channelStats)).join('');
-}
-function renderResultItem(item, channelStats = {}) {
+function renderResultItem(item, channelStats = {}, videoStats = {}) {
   if (item.id.kind === "youtube#video") {
+    const stats = videoStats[item.id.videoId];
     // Format date as "YYYY-MM-DD" or any other style you prefer
     const dateStr = item.snippet.publishedAt
-      ? new Date(item.snippet.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+      ? new Date(item.snippet.publishedAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })
       : '';
     const videoUrl = createVideoUrl(item.id.videoId);
     const channelUrl = createChannelUrl(item.snippet.channelId);
+    const duration = stats && stats.contentDetails ? parseDurationToVisual(stats.contentDetails.duration) : 'N/A';
     return `
         <div class="video-item">
             <a href="${videoUrl}" target="_self">
-              <img src="${item.snippet.thumbnails.medium.url}" alt="${item.snippet.title}" />
+              <div class="video-thumb-container">
+                <img src="${item.snippet.thumbnails.medium.url}" alt="${item.snippet.title}" />
+                <span class="video-duration">${duration}</span>
+              </div>
             </a>
             <h3>${item.snippet.title}</h3>
             <div class="video-meta">
@@ -343,6 +382,10 @@ function renderResultItem(item, channelStats = {}) {
             <a href="${channelUrl}" class="channel-link" target="_self">
                 ${item.snippet.channelTitle}
             </a>
+            <span class="video-meta-sep">&nbsp;•&nbsp;</span>
+            <span class="video-views-render">
+                ${stats && stats.statistics.viewCount ? Number(stats.statistics.viewCount).toLocaleString() : 'N/A'} views
+            </span>
             </div>
         </div>
         `
@@ -525,7 +568,6 @@ function createChannelUrl(channelId) {
   channelUrl = browserUrl("PrivaTube.html?" + params.toString());
   return(channelUrl);
 }
-
 function browserUrl(URL) {
   // Use browser.runtime.getURL to get the full URL for the extension
   const browserUrl = browser.runtime.getURL(`PrivaTube/${URL}`);

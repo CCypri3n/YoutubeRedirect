@@ -6,9 +6,9 @@ let lastQuery = '';
 let lastChannelId = '';
 let lastRegionCode = 'FR'; // for trending/homepage
 let currentCommentsVideoId = null;
+let commentSort = 'relevance'; // Default sort order for comments, time or relevance
 
 let API_KEY = '';
-
 
 
 function fetchApiKey() {
@@ -16,49 +16,48 @@ function fetchApiKey() {
     const apiKey = results.api_key; // Correctly access the stored API key
     if (apiKey) {
       return Promise.resolve(apiKey.trim());
-    }
+  }
     return Promise.reject("API key not found.");
   }).catch(() => {
-    return new Promise((resolve, reject) => {
-      // Show modal and set up event listener for save button
-      const modal = document.getElementById('api-key-modal');
-      const errorDiv = document.getElementById('api-key-error');
-      modal.style.display = 'flex';
-      document.getElementById('api-key-input').focus();
+  return new Promise((resolve, reject) => {
+    // Show modal and set up event listener for save button
+    const modal = document.getElementById('api-key-modal');
+    const errorDiv = document.getElementById('api-key-error');
+    modal.style.display = 'flex';
+    document.getElementById('api-key-input').focus();
 
-      const onSave = async () => {
-        const api_key = document.getElementById('api-key-input').value.trim();
-        if (!api_key) {
-          errorDiv.textContent = "Please enter an API key.";
+    const onSave = async () => {
+      const api_key = document.getElementById('api-key-input').value.trim();
+      if (!api_key) {
+        errorDiv.textContent = "Please enter an API key.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+      try {
+        const testResp = await fetch(
+          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${api_key}`
+        );
+        if (!testResp.ok) {
+          errorDiv.textContent = "Invalid API Key. Please try again.";
           errorDiv.style.display = 'block';
           return;
         }
-        try {
-          const testResp = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${api_key}`
-          );
-          if (!testResp.ok) {
-            errorDiv.textContent = "Invalid API Key. Please try again.";
-            errorDiv.style.display = 'block';
-            return;
-          }
           browser.storage.local.set({ api_key }).then(() => {
-            API_KEY = api_key;
-            modal.style.display = 'none';
-            document.getElementById('api-key-save-btn').removeEventListener('click', onSave);
-            resolve(api_key);
+        API_KEY = api_key;
+        modal.style.display = 'none';
+        document.getElementById('api-key-save-btn').removeEventListener('click', onSave);
+        resolve(api_key);
           });
-        } catch (err) {
-          errorDiv.textContent = "Network error. Please try again.";
-          errorDiv.style.display = 'block';
-        }
-      };
+      } catch (err) {
+        errorDiv.textContent = "Network error. Please try again.";
+        errorDiv.style.display = 'block';
+      }
+    };
 
-      document.getElementById('api-key-save-btn').addEventListener('click', onSave);
+    document.getElementById('api-key-save-btn').addEventListener('click', onSave);
     });
   });
 }
-
 
 
 async function headerClick() {
@@ -105,8 +104,19 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
   const input = document.getElementById('searchQuery');
   const btn = document.getElementById('country-code-btn');
   const list = document.getElementById('country-list');
-  const dropdown = document.getElementById('country-dropdown');
   const mainHeader = document.getElementById('main-header-link');
+  const copyBtn = document.getElementById('copy-share-link-btn');
+  const params = new URLSearchParams(window.location.search);
+  const lang = params.get('lang');
+  const videoId = params.get('v');
+  const searchBtn = document.getElementById('search-btn');
+  const shareBtn = document.getElementById('share-btn');
+  const shareModal = document.getElementById('share-modal');
+  const shareLink = document.getElementById('share-link');
+  const shareCloseBtn = document.getElementById('share-close-btn');
+  const commentSortBtn = document.getElementById('comment-sort-btn');
+  const commentList = document.getElementById('comment-list');
+
 
   closePlayer(); // Close player on page load
     if (input) {
@@ -119,21 +129,32 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
     }
   });
 
+  document.addEventListener('keydown', function(event) {
+  if (event.key === "Escape" && shareModal && shareModal.style.display === 'flex') {
+    shareModal.style.display = 'none';
+  }
+  });
+
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     list.style.display = (list.style.display === 'block') ? 'none' : 'block';
     btn.classList.toggle('active');
   });
 
+  commentSortBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    commentList.style.display = (commentList.style.display === 'block') ? 'none' : 'block';
+    commentSortBtn.classList.toggle('active');
+  });
+
   // Hide dropdown when clicking outside
   document.addEventListener('click', () => {
     list.style.display = 'none';
     btn.classList.remove('active');
+    commentList.style.display = 'none';
+    commentSortBtn.classList.remove('active');
   });
 
-  const params = new URLSearchParams(window.location.search);
-  const lang = params.get('lang');
-  const videoId = params.get('v');
   if (lang) {
     lastRegionCode = lang;
   } mainHeader.href = browserUrl("PrivaTube.html?lang=" + lastRegionCode); // Update header link to include region code
@@ -155,7 +176,21 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
     window.history.replaceState({}, '', url);
     mainHeader.href = browserUrl("PrivaTube.html?lang=" + lastRegionCode); // Update header link to include region code
     });
- });
+    // Handle sort selection
+  commentList.querySelectorAll('div').forEach(item => {
+    item.addEventListener('click', (e) => {
+      const code = item.getAttribute('data-code');
+      commentSort = code === 'recent' ? 'time' : 'relevance';
+      commentList.style.display = 'none';
+      commentSortBtn.classList.remove('active');
+      // Reload comments with new sort order
+      if (currentCommentsVideoId) {
+        displayComments(currentCommentsVideoId);
+        document.getElementById("comment-count").textContent = video.statistics.commentCount ? `${Number(video.statistics.commentCount).toLocaleString('en-EN')} Comments` : 'N/A Comments';
+      }
+    });
+    });
+  });
   
   fetchApiKey().then(key => {
   if (key && videoId) {
@@ -170,18 +205,13 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
     console.error("API Key error:", err);
   });
 
-  const searchBtn = document.getElementById('search-btn');
   if (searchBtn) {
     searchBtn.addEventListener('click', function() {
       searchVideos();
     });
   }
 
-  const shareBtn = document.getElementById('share-btn');
-  const shareModal = document.getElementById('share-modal');
-  const shareLink = document.getElementById('share-link');
-  const shareCloseBtn = document.getElementById('share-close-btn');
-
+  
   if (shareBtn && shareModal && shareLink && shareCloseBtn) {
     shareBtn.onclick = function() {
       if (!lastPlayedVideoId) return;
@@ -199,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
     };
   }
 // Copy share link functionality
-  const copyBtn = document.getElementById('copy-share-link-btn');
   if (copyBtn && shareLink) {
     copyBtn.onclick = function() {
       shareLink.select();
@@ -212,17 +241,31 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
 });
 
 function linkify(text) {
-  // Regex to match URLs (http/https)
-  text = text.replace(
-    /(https?:\/\/[^\s]+)/g,
-    (match, url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
-  );
-    // 2. Linkify local .html links with optional query parameters
-  text = text.replace(
-    /\b([a-zA-Z0-9_-]+\.html(?:\?[^\s]*)?)/g,
-    (match, url) => `<a href="${browserUrl(url)}"></a>`
-  );
-  return text;
+  // Create a temporary DOM element
+  const div = document.createElement('div');
+  div.innerHTML = text;
+
+  function walk(node) {
+    if (node.nodeType === 3) { // Text node
+      // Replace URLs in text nodes only
+      const replaced = node.nodeValue.replace(
+        /(https?:\/\/[^\s]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+      ).replace(
+        /\b([a-zA-Z0-9_-]+\.html(?:\?[^\s]*)?)/g,
+        '<a href="$1">$1</a>'
+      );
+      if (replaced !== node.nodeValue) {
+        const span = document.createElement('span');
+        span.innerHTML = replaced;
+        node.parentNode.replaceChild(span, node);
+      }
+    } else if (node.nodeType === 1 && node.tagName !== 'A') {
+      Array.from(node.childNodes).forEach(walk);
+    }
+  }
+  walk(div);
+  return div.innerHTML;
 }
 
 // --- Video Player Logic ---
@@ -235,29 +278,35 @@ async function videoInfoShow(videoId) {
       const resp = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`);
       const data = await resp.json();
       if (data.items && data.items.length > 0) {
-        console.log("Video data fetched successfully:", data);
         video = data.items[0];
         document.getElementById('video-title').textContent = video.snippet.title;
         document.getElementById('video-description').innerHTML = youtubeDescriptiontoPrivaTube(video.snippet.description);
-        document.getElementById('view-count').textContent = `${Number(video.statistics.viewCount).toLocaleString()} views`;
-        document.getElementById('like-count').textContent = `${video.statistics.likeCount ? Number(video.statistics.likeCount).toLocaleString()+" likes": ''}`;
+        document.getElementById('view-count').innerHTML = video.statistics.viewCount
+            ? `<img src="web/icons/views-96.svg" alt="Views" class="description-view-icon" style="width:16px;height:16px;vertical-align:middle;margin-left:8px;margin-right:4px;">${Number(video.statistics.viewCount)
+              .toLocaleString('de-DE')}`
+            : '';
+          const publishedDate = new Date(video.snippet.publishedAt);
+        document.getElementById('video-published-date').textContent =
+          publishedDate
+            ? publishedDate.toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })
+            : '';
+        currentCommentsVideoId = videoId;
+        displayComments(videoId); // Load comments for the video
+        document.getElementById("comment-count").textContent = video.statistics.commentCount ? `${Number(video.statistics.commentCount).toLocaleString('en-EN')} Comments` : 'N/A Comments';
       } else {
         throw new Error("No video data");
       }
     } catch (err) {
-      console.error("Error fetching video info:", err);
-      // Reset video info if fetch fails
       document.getElementById('video-title').textContent = 'Video Title';
       document.getElementById('video-description').textContent = 'Video description will appear here.';
       document.getElementById('view-count').textContent = 'Views: N/A';
-      document.getElementById('like-count').textContent = 'Likes: N/A';
+      
       video = null;
     }
 
     // Only fetch channel info if video was found
     if (video) {
       try {
-        console.log("Fetching channel info for video:", video);
         const channelID = video.snippet.channelId;
         const channelResp = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelID}&key=${API_KEY}`);
         const channelData = await channelResp.json();
@@ -266,7 +315,11 @@ async function videoInfoShow(videoId) {
           // After fetching channel info:
           document.getElementById('channel-name').textContent = channel.snippet.title;
           document.getElementById('channel-name').style.cursor = "pointer";
-
+          // Add this for likes:
+          const likeCount = video.statistics.likeCount ? Number(video.statistics.likeCount).toLocaleString() : '';
+          document.getElementById('channel-likes').innerHTML = likeCount
+            ? `<img src="web/icons/like-96.svg" alt="Likes" class="channel-like-icon" style="width:16px;height:16px;vertical-align:middle;margin-left:8px;margin-right:4px;">${likeCount}`
+            : '';
           document.getElementById('channel-avatar').src = channel.snippet.thumbnails.default.url;
           document.getElementById('channel-avatar').alt = channel.snippet.title;
           document.getElementById('channel-avatar').style.cursor = "pointer";
@@ -276,8 +329,6 @@ async function videoInfoShow(videoId) {
               ? `${Number(channel.statistics.subscriberCount).toLocaleString()} subscribers`
               : '';
           document.title = `PrivaTube - Watching "${channel.snippet.title}"`;
-          currentCommentsVideoId = videoId;
-          displayComments(videoId); // Load comments for the video
           console.log("Channel info fetched successfully:", channel);
         }
       } catch (err) {
@@ -300,7 +351,6 @@ async function videoInfoShow(videoId) {
     document.getElementById('video-description').textContent = "";
     document.getElementById('video-description').innerHTML = "";
     document.getElementById('view-count').textContent = "";
-    document.getElementById('like-count').textContent = "";
     document.getElementById('channel-avatar').src = '';
     document.getElementById('channel-avatar').alt = '';
     document.getElementById('channel-avatar').style.cursor = "default";
@@ -395,8 +445,24 @@ function youtubeDescriptiontoPrivaTube(description) {
   // Channel IDs are 24 characters, start with UC, and contain letters, numbers, -, _
   description = description.replace(
     /https?:\/\/(?:www\.)?youtube\.com\/channel\/(UC[a-zA-Z0-9_-]{22})/g,
-    (match, channelId) => browserUrl(`PrivaTube.html?ch=${channelId}`)
+    'index.html?ch=$1'
   );
+
+  // Match Timecodes in the format "00:00" or "0:00" or "00:0"
+  const timecodeRegex = /(\d{1,2}:\d{2}(?::\d{2})?)/g;
+  description = description.replace(timecodeRegex, (match) => {
+    // Convert to seconds
+    const parts = match.split(':').map(Number);
+    let seconds = 0;
+    if (parts.length === 3) {
+      seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+    } else if (parts.length === 2) {
+      seconds = parts[0] * 60 + parts[1];
+    } else {
+      seconds = parts[0]; // Just in case
+    }
+    return `<a href=browserUrl("video.html?v=${lastPlayedVideoId}&t=${seconds}">${match})</a>`;
+  });
 
   return linkify(description);
 }
@@ -443,7 +509,7 @@ function displayComments(videoId, pageToken = null, append = false) {
     commentWrapper.textContent = 'No video selected.';
     return;
   }
-  let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&key=${API_KEY}`;
+  let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&key=${API_KEY}&order=${commentSort}`;
   if (pageToken) apiUrl += `&pageToken=${pageToken}`;
   fetch(apiUrl)
     .then(response => response.json())
@@ -497,19 +563,17 @@ function displayComments(videoId, pageToken = null, append = false) {
           toggleLoadMoreButton(false);
         }
       } else {
-        commentWrapper.textContent = 'No comments available.';
+        commentsDiv.textContent = 'No comments available.';
       }
     })
     .catch(err => {
       console.error("Error fetching comments:", err);
-      commentWrapper.textContent = 'Error loading comments.';
+      commentsDiv.textContent = 'Error loading comments.';
     });
 }
 
 document.getElementById('load-more-btn').onclick = function() {
-  console.log("Load more comments clicked, current video ID:", currentCommentsVideoId);
   if (currentCommentsVideoId && nextPageToken) {
-    console.log("Loading more comments for video ID:", currentCommentsVideoId, "with page token:", nextPageToken);
     displayComments(currentCommentsVideoId, nextPageToken, true);
   }
 };
@@ -517,7 +581,6 @@ document.getElementById('load-more-btn').onclick = function() {
 function toggleLoadMoreButton(show) {
   document.getElementById('load-more-btn').style.display = show ? 'block' : 'none';
 }
-
 function browserUrl(URL) {
   // Use browser.runtime.getURL to get the full URL for the extension
   const browserUrl = browser.runtime.getURL(`PrivaTube/${URL}`);
