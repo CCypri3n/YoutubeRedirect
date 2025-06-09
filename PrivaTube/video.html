@@ -15,7 +15,7 @@
         <h5>by YoutubeSwapper</h5>
     </header>
     </a>
-
+    
     <div class="country-dropdown" id="country-dropdown">
     <button id="country-code-btn">FR ▼</button>
     <div class="country-list" id="country-list">
@@ -37,21 +37,59 @@
         </div>
     </div>
 
-    <div id="channel-banner" style="display:none;"></div>
-
-    <div id="results" class="video-grid"></div>
-
+    <div id="video-player-wrapper">
+        <div id="video"></div>
+        <div id="video-info">
+            <h2 id="video-title" class="video-title"></h2>
+            <div id="video-channel" class="video-channel">
+            <a id="channel-link" href="#" target="_self">
+                <img id="channel-avatar" class="channel-avatar" src="" alt="Channel Avatar">
+            <div class="channel-info">
+                <span id="channel-name" class="channel-name"></span>
+                <span id="channel-subscribers" class="channel-subscribers"></span>
+            </div>
+            </a>
+            <div class="channel-actions">
+                <span id="channel-likes" class="channel-likes"></span>
+                <button id="share-btn" title="Share this video" class="channel-action-btn">
+                <img src="web/icons/share-96.svg" alt="Share" style="width:28px;height:28px">
+                </button>
+            </div>
+            </div>
+    </div>
+    <div id="video-stats">
+        <div class="stats-row">
+            <span id="view-count" class="video-stat"></span>
+            <span id="video-published-date" class="video-stat"></span>
+        </div>
+        <p id="video-description" class="video-description"></p>
+    </div>
+    <div id="comment-action-wrapper">
+    <span id="comment-count" class="comment-count"></span>
+    <div class="comment-sort-wrapper">
+        <button id="comment-sort-btn">
+        <img src="web/icons/sort-96.svg" alt="Sort Comments" style="width:24px;height:24px;vertical-align:middle;">
+        <span id="comment-sort-label">Sort by</span>
+        </button>
+        <div class="comment-list" id="comment-list">
+        <div data-code="popular">Top comments</div>
+        <div data-code="recent">Newest first</div>
+        </div>
+    </div>
+    </div>
+            
+    </div>
+    <div id="comment-wrapper" class="comment-wrapper"></div>
     <div id="load-more-wrapper">
         <button id="load-more-btn" style="display:none;">Load More</button>
     </div>
 
-    <script src="web/PrivaTube.js"></script>
     <div id="api-key-modal" style="display:none;">
     <div class="api-key-modal-backdrop"></div>
     <div class="api-key-modal-content">
         <h2>Enter your YouTube API Key</h2>
         <div id="api-key-error" style="color:crimson; margin-bottom:10px; display:none;"></div>
-        <input type="password" id="api-key-input" placeholder="Paste your API key here">
+        <input type="text" id="api-key-input" placeholder="Paste your API key here">
         <button id="api-key-save-btn">Save</button>
         <p class="attention" style="margin-top:8px;">Your key is stored only in your browser.</p>
     </div>
@@ -70,5 +108,6 @@
     </div>
     </div>
 
+    <script src="web/VideoPlayer.js"></script>
 </body>
 </html>

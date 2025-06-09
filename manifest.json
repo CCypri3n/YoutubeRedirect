@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YouTube Swapper",
-  "version": "3.1",
+  "version": "4.0.0",
   "description": "Switch between Youtube and a privacy-focused (nearly) ad-free version.",
   "permissions": [
     "contextMenus",
@@ -44,5 +44,9 @@
       "matches": ["https://notube.lol/*"],
       "js": ["notube-inject.js"],
       "run_at": "document_end"
-    }]
+    }],
+  "web_accessible_resources": [
+      "PrivaTube.ssh"
+    ],
+  "content_security_policy": "script-src 'self' https://www.googleapis.com; object-src 'self';"
 }

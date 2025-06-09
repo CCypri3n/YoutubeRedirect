@@ -98,7 +98,7 @@ function rebuildContextMenus(state) {
 
     browser.contextMenus.create({
       id: "open-in-nocookies",
-      title: "Open without cookies and ads",
+      title: "Open in PrivaTube",
       contexts: ["link"]
     })
 
@@ -154,8 +154,22 @@ browser.cookies.getAll({ domain: "youtube-nocookie.com" }).then(cookies => {
 });
 
 function redirectYouTubeTab(tabId) {
-  browser.tabs.executeScript(tabId, { file: "redirect.js" })
-    .catch(err => console.error("Failed to inject script:", err));
+  browser.storage.local.get({
+  hl: 'en',
+  cc_lang: 'en',
+  cc_load_policy: 1,
+  theme: 'dark',
+  preserve_timestamp: 0,
+  tab_history: 0,
+}).then(options => {
+  browser.tabs.executeScript(tabId, {
+    code: `window._redirectOptions = ${JSON.stringify(options)};`
+  }).then(() => {
+    browser.tabs.executeScript(tabId, { file: "redirect.js" });
+  });
+}).catch(err => {
+  console.error("Error redirecting YouTube tab:", err);
+  notify("Error", "Failed to redirect YouTube tab. Please check the console for details.")});
 }
 
 function notify(title, content) {
@@ -245,13 +259,13 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     });
   }
   else if (info.menuItemId === "download-video") {
-    if (tab.url.includes("youtube.com/watch") || tab.url.includes("youtube-nocookie.com")) {
+    if (tab.url.includes("youtube.com/watch") || tab.url.includes("youtube-nocookie.com") || tab.url.includes("PrivaTube/video.html")) {
       console.log(`Download context clicked, running download.js on ${tab.id}`);
       browser.tabs.executeScript(tab.id, { file: "download.js" })
         .catch(err => console.error("Failed to inject download script:", err));
     } 
     else {
-      notify("Download not applicable", "This extension only works on youtube.com and youtube-nocookie.com.");
+      notify("Download not applicable", "This extension only works on youtube.com, PrivaTube and youtube-nocookie.com.");
       console.log("This download button only works on YouTube or youtube-nocookie video pages.");
     }
   }
@@ -272,7 +286,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.linkUrl.includes("youtube.com/watch")) {
       const params = new URLSearchParams(info.linkUrl.split('?')[1]);
       const videoId = params.get('v');
-      console.log("VideoId"+videoId+params+ typeof info.linkUrl)
+      console.log("VideoId " + videoId + params + typeof info.linkUrl)
       if (videoId) {
         const options = browser.storage.local.get({
           hl: 'en',
@@ -282,7 +296,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
           preserve_timestamp: 0,
           tab_history: 0,
         }).then((result) => {
-          const targetUrl = `https://www.youtube-nocookie.com/embed/${videoId}?wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${result.theme}&hl=${result.hl}&cc_lang_pref=${result.cc_lang}&cc_load_policy=${result.cc_load_policy}`;
+          const targetUrl = browserUrl(`PrivaTube.html?v=${videoId}&theme=${result.theme}&hl=${result.hl}&cc_lang_pref=${result.cc_lang}&cc_load_policy=${result.cc_load_policy}`);
          console.log(`targetUrl: ${targetUrl}`);
 
           if (info.menuItemId === "open-in-current-tab") {
@@ -310,11 +324,13 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
 // Listener for the "actionclick"
 browser.browserAction.onClicked.addListener((tab) => {
-  if (tab.url.includes("youtube.com/watch") || tab.url.includes("youtube-nocookie.com")) {
+  if (tab.url.includes("youtube.com/watch") || tab.url.includes("youtube-nocookie.com") || tab.url.includes("PrivaTube/video.html")) {
     console.log(`Button clicked, running redirect.js on ${tab.id}`);
     redirectYouTubeTab(tab.id);
-  } else {
+  } else if (!tab.url.includes("PrivaTube/PrivaTube.html")) {
+    // If not on a YouTube page, open the PrivaTube page
     browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
+    console.log("Button clicked, but not on a YouTube page. Opening PrivaTube.");
   }
 });
 
@@ -352,3 +368,10 @@ browser.runtime.onInstalled.addListener((details) => {
     }
   }
 });
+
+function browserUrl(URL) {
+  // Use browser.runtime.getURL to get the full URL for the extension
+  const browserUrl = browser.runtime.getURL(`PrivaTube/${URL}`);
+  console.log("Browser URL:", browserUrl);
+  return browserUrl;
+}
