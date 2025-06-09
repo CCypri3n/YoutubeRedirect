@@ -568,6 +568,7 @@ function createChannelUrl(channelId) {
   channelUrl = browserUrl("PrivaTube.html?" + params.toString());
   return(channelUrl);
 }
+
 function browserUrl(URL) {
   // Use browser.runtime.getURL to get the full URL for the extension
   const browserUrl = browser.runtime.getURL(`PrivaTube/${URL}`);
