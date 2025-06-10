@@ -4,7 +4,7 @@ A Firefox extension for privacy-first YouTube watching. Now featuring **PrivaTub
 
 ## ✨ Features
 
-- 🔄 Redirect YouTube links to PrivaTube - a local YouTube alternative using the YouTube API (requires your own API key - Check ) for enhanced privacy and minimal ads or to youtube-nocookies.com, a lightweight video player (Doesn't require your own API key)
+- 🔄 Redirect YouTube links to PrivaTube - a local YouTube alternative using the YouTube API (requires your own API key - See below for more information) for enhanced privacy and minimal ads or to youtube-nocookies.com, a lightweight video player (doesn't require your own API key).
 - 🔍 Search and watch YouTube videos via PrivaTube, right inside the extension
 - 📝 Context menu: toggle subtitles, notifications, download video, open options, visit GitHub
 - ⚙️ Configurable options: interface language, subtitle language, theme, notifications, playback timestamp/history, download policy & format
