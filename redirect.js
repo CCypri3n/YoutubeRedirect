@@ -15,6 +15,7 @@
   theme: 'dark',
   preserve_timestamp: 0,
   tab_history: 0,
+  privatube: 1,
 };
   console.log("Opions:", options);
   let timestamp = ""
@@ -38,8 +39,9 @@
   
   console.log("Current URL:", currentUrl);
   if (videoId && currentUrl.includes("youtube.com/watch")) {
-    const targetUrl = browserUrl(`PrivaTube.html?v=${videoId}&wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${options.theme}&hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}${timestamp}`);
-    browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
+  const targetUrl = options.privatube
+    ? browserUrl(`PrivaTube.html?v=${videoId}&wmode=transparent&iv_load_policy=3&autoplay=1&html5=1&showinfo=0&rel=0&modestbranding=1&playsinline=0&theme=${options.theme}&hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}${timestamp}`)
+    : `https://www.youtube-nocookie.com/embed/${videoId}?hl=${options.hl}&cc_lang_pref=${options.cc_lang}&cc_load_policy=${options.cc_load_policy}`;    browser.runtime.sendMessage({ log: `targetUrl: ${targetUrl}` });
     if (Number(options.tab_history)) {
       window.location.assign(targetUrl);
     }

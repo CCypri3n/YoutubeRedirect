@@ -1,106 +1,132 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>YouTubeSwapper V4</title>
+  <title>YouTubeSwapper V4.0.1</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="icons/icon-96.png">
 </head>
 <body>
   <h1>YouTubeSwapper Settings</h1>
 
-  <h2>Nocookie-player</h2>
+  <!-- Nocookie-player Section -->
+  <div class="settings-card">
+    <h2>Nocookie-player</h2>
+    <div class="setting-row">
+      <span class="setting-label">
+        Current Player:&nbsp;
+        <strong id="playerLabel">PrivaTube</strong>
+        <span class="player-switch-desc">(PrivaTube needs a youtube API Key to work.)</span>
+      </span>
+      <label class="switch" title="Switch between PrivaTube and Nocookie player">
+        <input type="checkbox" id="privatube">
+        <span class="slider"></span>
+      </label>
+    </div>
 
-  <label for="hl">Interface language (hl): </label>
-  <select id="hl">
-    <option value="en">English</option>
-    <option value="fr">Français</option>
-    <option value="de">Deutsch</option>
-    <option value="es">Español</option>
-  </select><br/><br/>
-
-
-  <label for="cc_lang">Subtitle language (cc): </label>
-  <select id="cc_lang">
-    <option value="en">English</option>
-    <option value="fr">Français</option>
-    <option value="de">Deutsch</option>
-    <option value="es">Español</option>
-  </select><br/><br/>
-  
-  <label for="cc_load_policy">Subtitles: </label>
-  <select id="cc_load_policy">
-    <option value=0>off</option>
-    <option value=1>on</option>
-  </select><br/><br/>
-
-  <label for="theme">Theme: </label>
-  <select id="theme">
-    <option value="light">Light</option>
-    <option value="dark">Dark</option>
-  </select><br/><br/>
-
-  <h2>Extension</h2>
-  <label for="notifications_allowed">Notifications: </label>
-  <select id="notifications_allowed">
-    <option value=0>off</option>
-    <option value=1>on</option>
-  </select><br/>
-  <label class="attention">(Check if Firefox is allowed to send notifications, in order for this to work)</label><br/><br/>
-
-  <label for="preserve_timestamp">Preserve timestamp on switch: </label>
-  <select id="preserve_timestamp">
-    <option value=0>off</option>
-    <option value=1>on</option>
-  </select><br/><br/>
-
-  <label for="tab_history">Preserve tab history on switch: </label>
-  <select id="tab_history">
-    <option value=0>off</option>
-    <option value=1>on</option>
-  </select><br/>
-  <label class="attention">(This feature ist intended to keep the youtube-video in your tab history.)</label><br/><br/>
-  
-
-  <label for="download_policy">Download videos with https://notube.lol/: </label>
-  <select id="download_policy">
-    <option value=0>off</option>
-    <option value=1>on</option>
-  </select><br/>
-  <label class="attention">(I do not own notube.lol, use at your own Risk.)</label><br/><br/>
-
-  <div id="downloadOptions" style="display: none; margin-left: 24px; padding-left: 8px;">
-    <label for="download_format">Default format: </label>
-    <select id="download_format">
-      <option value="mp3">MP3</option>
-      <option value="mp3hd">MP3 HD</option>
-      <option value="mp4">MP4</option>
-      <option value="mp4hd">MP4 HD</option>
-      <option value="mp42k">MP4 2K</option>
-      <option value="m4a">M4A</option>
-      <option value="wav">WAV</option>
-      <option value="3gp">3GP</option>
-      <option value="flv">FLV</option>
-
-    </select>
-    <br/><br/>
+    <div class="setting-row">
+      <label for="hl" class="setting-label">Interface language</label>
+      <select id="hl">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label for="cc_lang" class="setting-label">Subtitle language</label>
+      <select id="cc_lang">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label for="cc_load_policy" class="setting-label">Subtitles</label>
+      <label class="switch">
+        <input type="checkbox" id="cc_load_policy">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <label for="theme" class="setting-label">Theme</label>
+      <select id="theme">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
   </div>
 
+  <!-- Extension Section -->
+  <div class="settings-card">
+    <h2>Extension</h2>
+    <div class="setting-row">
+      <label for="notifications_allowed" class="setting-label">Notifications</label>
+      <label class="switch">
+        <input type="checkbox" id="notifications_allowed">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-help">Check if Firefox is allowed to send notifications for this to work.</div>
 
- <label>YouTube API Key: </label>
-  <span id="apiKeyContainer">
-    <input id="apiKeyInput" type="password" placeholder="(not set)" class="api-key-input" autocomplete="off" />
-    <button id="toggleApiKeyBtn" type="button">Show</button>
-  </span>
-  <br/><br/>
+    <div class="setting-row">
+      <label for="preserve_timestamp" class="setting-label">Preserve timestamp on switch</label>
+      <label class="switch">
+        <input type="checkbox" id="preserve_timestamp">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <label for="tab_history" class="setting-label">Preserve tab history on switch</label>
+      <label class="switch">
+        <input type="checkbox" id="tab_history">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-help">This feature is intended to keep the YouTube video in your tab history.</div>
 
+    <div class="setting-row">
+      <label for="download_policy" class="setting-label">
+        Download videos with <a href="https://notube.lol/" target="_blank">notube.lol</a>
+      </label>
+      <label class="switch">
+        <input type="checkbox" id="download_policy">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-help">I do not own notube.lol, use at your own risk.</div>
 
+    <div id="downloadOptions" style="display: none; margin-left: 24px; padding-left: 8px;">
+      <div class="setting-row">
+        <label for="download_format" class="setting-label">Default format</label>
+        <select id="download_format">
+          <option value="mp3">MP3</option>
+          <option value="mp3hd">MP3 HD</option>
+          <option value="mp4">MP4</option>
+          <option value="mp4hd">MP4 HD</option>
+          <option value="mp42k">MP4 2K</option>
+          <option value="m4a">M4A</option>
+          <option value="wav">WAV</option>
+          <option value="3gp">3GP</option>
+          <option value="flv">FLV</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-  <button id="saveBtn" class="button">Save</button><br/><br/>
-  <div id="status"></div>
+  <!-- API Key Section -->
+  <div class="settings-card">
+    <h2>YouTube API Key</h2>
+    <div id="apiKeyContainer">
+      <input id="apiKeyInput" type="password" placeholder="(not set)" class="api-key-input" autocomplete="off" />
+      <button id="toggleApiKeyBtn" type="button">Show</button>
+      <button id="saveApiKeyBtn" class="button small">Save API Key</button>
+    </div>
+    <div id="apiKeyStatus" class="toast"></div>
+  </div>
+  <div id="status" class="toast"></div>
 
   <script src="options.js"></script>
-
 </body>
 </html>

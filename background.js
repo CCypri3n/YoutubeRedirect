@@ -161,6 +161,7 @@ function redirectYouTubeTab(tabId) {
   theme: 'dark',
   preserve_timestamp: 0,
   tab_history: 0,
+  privatube: 1,
 }).then(options => {
   browser.tabs.executeScript(tabId, {
     code: `window._redirectOptions = ${JSON.stringify(options)};`
@@ -295,8 +296,9 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
           theme: 'dark',
           preserve_timestamp: 0,
           tab_history: 0,
+          privatube: 1
         }).then((result) => {
-          const targetUrl = browserUrl(`PrivaTube.html?v=${videoId}&theme=${result.theme}&hl=${result.hl}&cc_lang_pref=${result.cc_lang}&cc_load_policy=${result.cc_load_policy}`);
+          const targetUrl = privatube ? browserUrl(`PrivaTube.html?v=${videoId}&theme=${result.theme}&hl=${result.hl}&cc_lang_pref=${result.cc_lang}&cc_load_policy=${result.cc_load_policy}`) : `https://www.youtube-nocookie.com/embed/${videoId}?hl=${result.hl}&cc_lang_pref=${result.cc_lang}&cc_load_policy=${result.cc_load_policy}`;
          console.log(`targetUrl: ${targetUrl}`);
 
           if (info.menuItemId === "open-in-current-tab") {
@@ -329,8 +331,13 @@ browser.browserAction.onClicked.addListener((tab) => {
     redirectYouTubeTab(tab.id);
   } else if (!tab.url.includes("PrivaTube/PrivaTube.html")) {
     // If not on a YouTube page, open the PrivaTube page
+    browser.storage.local.get({
+      privatube: 1
+    }).then(options => {
+      if (options.privatube) {
     browser.tabs.create({url: browser.runtime.getURL("PrivaTube/PrivaTube.html")});
     console.log("Button clicked, but not on a YouTube page. Opening PrivaTube.");
+  }});
   }
 });
 

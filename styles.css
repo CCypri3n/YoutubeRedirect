@@ -1,100 +1,123 @@
-/* styles.css */
-
-/* Light mode styles (default) */
 body {
-    background-color: white;
-    color: black;
-    font-family: Arial, Arial, Helvetica, sans-serif;
-  }
-
-h2, h3, h4, h5 {
-    font-family: Arial, Arial, Helvetica, sans-serif;
+  background-color: white;
+  color: black;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0 0 40px 0;
 }
 
 h1 {
-  color:crimson;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.button {
-  background-color:crimson;
-  border: none;
-  color: white;
-  padding: 15px 32px;
+  color: crimson;
+  margin: 32px 0 24px 0;
   text-align: center;
-  text-decoration: none;
+}
+
+.settings-card {
+  background: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  padding: 24px 32px;
+  margin: 0 auto 32px auto;
+  max-width: 500px;
+}
+
+h2 {
+  margin-top: 0;
+  color: #222;
+  font-size: 1.3em;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0;
+}
+
+.setting-label {
+  flex: 1 0 220px;
+  min-width: 160px;
+}
+
+.setting-row .setting-label {
+  flex: 1 0 220px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  font-weight: normal;
+}
+
+.player-switch-desc {
+  font-size: 0.93em;
+  color: #888;
+  font-style: italic;
+  margin-top: 2px;
+  font-weight: normal;
+}
+
+#playerLabel {
+  color: crimson;
+  font-weight: bold;
+  margin-left: 0;
+}
+
+
+.switch {
+  position: relative;
   display: inline-block;
-  font-size: 16px;
-  border-radius: 10px;
+  width: 36px;
+  height: 20px;
+  flex: 0 0 auto;
+  margin-left: 8px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
   cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: .4s;
+}
+.switch input:checked + .slider {
+  background-color: crimson;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px; width: 16px;
+  left: 2px; bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+}
+.switch input:checked + .slider:before {
+  transform: translateX(16px);
 }
 
-.button:hover {
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+.setting-help {
+  font-size: 0.93em;
+  color: #888;
+  font-style: italic;
+  margin-bottom: 8px;
+  margin-left: 4px;
 }
 
-.attention {
-  font-size: 0.85em;    /* Smaller font size */
-  color: #888888;       /* Gray color for subtlety */
-  font-style: italic;   /* Optional: makes it less formal */
-  margin-left: 6px;     /* Optional: slight indent */
-}
-
-  /* Dark mode styles */
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-color: #333333;
-      color: #e2e2e2;
-    }
-    h2, h3, h4, h5 {
-      color: #f4f4f4;
-      font-family: Arial, Arial, Helvetica, sans-serif;
-    }
-    h1 {
-      color:crimson;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-    .button {
-        background-color:crimson;
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        border-radius: 10px;
-        cursor: pointer;
-      }
-      .button:hover {
-          box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-      }
-      
-    img {
-      filter: grayscale(20%);
-    }
-    hr {
-      border-color: #555555;
-    }
-    p code {
-      color: #333333;
-    }
-  }
-  
-  /* ...existing code... */
-
-.api-key-input {
-  width: 340px;           /* Adjust as needed for your API key length */
-  max-width: 100%;
-  padding: 10px 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
+select, .api-key-input {
+  font-size: 1em;
+  padding: 8px 12px;
   border-radius: 8px;
-  box-sizing: border-box;
-  margin-right: 8px;
+  border: 1px solid #ccc;
   background: #fff;
   color: #222;
-  transition: border-color 0.2s;
+  margin-left: 8px;
+  min-width: 120px;
+}
+
+.api-key-input {
+  width: 260px;
+  max-width: 100%;
+  margin-right: 8px;
 }
 
 .api-key-input:focus {
@@ -103,8 +126,8 @@ h1 {
 }
 
 #toggleApiKeyBtn {
-  padding: 10px 18px;
-  font-size: 16px;
+  padding: 8px 18px;
+  font-size: 1em;
   border: none;
   border-radius: 8px;
   background-color: crimson;
@@ -117,20 +140,111 @@ h1 {
   box-shadow: 0 4px 12px 0 rgba(220,20,60,0.18);
 }
 
-/* Dark mode for input/button */
-@media (prefers-color-scheme: dark) {
+.button {
+  background-color: crimson;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  margin: 32px auto 0 auto;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.button:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.button.small {
+  padding: 8px 18px;
+  font-size: 1em;
+  margin-left: 12px;
+  margin-top: 1%;
+  display: inline-block;
+}
+
+/* Crimson link styling */
+a {
+  color: crimson;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover, a:focus {
+  color: #b2002d;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .settings-card {
+    padding: 16px 6vw;
+    max-width: 98vw;
+  }
+  .setting-label {
+    min-width: 110px;
+  }
   .api-key-input {
+    width: 100px;
+  }
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #222;
+    color: #e2e2e2;
+  }
+  .settings-card {
+    background: #2c2c2c;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  }
+  h2 {
+    color: #f4f4f4;
+  }
+  select, .api-key-input {
     background: #222;
     color: #eee;
     border: 1px solid #444;
   }
-  #toggleApiKeyBtn {
-    background-color: crimson;
-    color: #fff;
-  }
 }
 
-#apiKeyContainer {
+.toast,
+#apiKeyStatus.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  background: crimson;
+  color: #fff;
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-size: 1.1em;
+  box-shadow: 0 4px 24px rgba(220,20,60,0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s, bottom 0.4s;
+  z-index: 9999;
   display: flex;
   align-items: center;
+  gap: 10px;
+}
+.toast.show,
+#apiKeyStatus.show {
+  opacity: 1;
+  bottom: 48px;
+  pointer-events: auto;
+}
+.toast .checkmark {
+  display: inline-block;
+  font-size: 1.4em;
+  color: #fff;
+  animation: pop 0.3s;
+}
+@keyframes pop {
+  0% { transform: scale(0.5); }
+  80% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
