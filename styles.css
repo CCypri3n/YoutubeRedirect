@@ -15,7 +15,7 @@ h1 {
 .settings-card {
   background: #fafafa;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   padding: 24px 32px;
   margin: 0 auto 32px auto;
   max-width: 500px;
@@ -70,28 +70,40 @@ h2 {
   flex: 0 0 auto;
   margin-left: 8px;
 }
-.switch input { display: none; }
+
+.switch input {
+  display: none;
+}
+
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
   border-radius: 20px;
   transition: .4s;
 }
-.switch input:checked + .slider {
+
+.switch input:checked+.slider {
   background-color: crimson;
 }
+
 .slider:before {
   position: absolute;
   content: "";
-  height: 16px; width: 16px;
-  left: 2px; bottom: 2px;
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
   background-color: white;
   border-radius: 50%;
   transition: .4s;
 }
-.switch input:checked + .slider:before {
+
+.switch input:checked+.slider:before {
   transform: translateX(16px);
 }
 
@@ -103,7 +115,8 @@ h2 {
   margin-left: 4px;
 }
 
-select, .api-key-input {
+select,
+.api-key-input {
   font-size: 1em;
   padding: 8px 12px;
   border-radius: 8px;
@@ -137,7 +150,7 @@ select, .api-key-input {
 }
 
 #toggleApiKeyBtn:hover {
-  box-shadow: 0 4px 12px 0 rgba(220,20,60,0.18);
+  box-shadow: 0 4px 12px 0 rgba(220, 20, 60, 0.18);
 }
 
 .button {
@@ -155,7 +168,7 @@ select, .api-key-input {
 }
 
 .button:hover {
-  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
 .button.small {
@@ -172,7 +185,9 @@ a {
   text-decoration: none;
   transition: color 0.2s;
 }
-a:hover, a:focus {
+
+a:hover,
+a:focus {
   color: #b2002d;
   text-decoration: underline;
 }
@@ -183,9 +198,11 @@ a:hover, a:focus {
     padding: 16px 6vw;
     max-width: 98vw;
   }
+
   .setting-label {
     min-width: 110px;
   }
+
   .api-key-input {
     width: 100px;
   }
@@ -197,14 +214,18 @@ a:hover, a:focus {
     background-color: #222;
     color: #e2e2e2;
   }
+
   .settings-card {
     background: #2c2c2c;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   }
+
   h2 {
     color: #f4f4f4;
   }
-  select, .api-key-input {
+
+  select,
+  .api-key-input {
     background: #222;
     color: #eee;
     border: 1px solid #444;
@@ -222,7 +243,7 @@ a:hover, a:focus {
   border-radius: 8px;
   padding: 14px 32px;
   font-size: 1.1em;
-  box-shadow: 0 4px 24px rgba(220,20,60,0.18);
+  box-shadow: 0 4px 24px rgba(220, 20, 60, 0.18);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s, bottom 0.4s;
@@ -231,20 +252,31 @@ a:hover, a:focus {
   align-items: center;
   gap: 10px;
 }
+
 .toast.show,
 #apiKeyStatus.show {
   opacity: 1;
   bottom: 48px;
   pointer-events: auto;
 }
+
 .toast .checkmark {
   display: inline-block;
   font-size: 1.4em;
   color: #fff;
   animation: pop 0.3s;
 }
+
 @keyframes pop {
-  0% { transform: scale(0.5); }
-  80% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.5);
+  }
+
+  80% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }

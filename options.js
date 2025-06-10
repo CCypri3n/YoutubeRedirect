@@ -1,25 +1,27 @@
 let apiKeyVisible = false;
 let storedApiKey = "";
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('download_policy').addEventListener('change', updateDownloadOptionsVisibility);
   document.querySelectorAll(
     '#hl, #cc_lang, #cc_load_policy, #theme, #notifications_allowed, #download_policy, #download_format, #preserve_timestamp, #tab_history, #privatube'
   ).forEach(el => {
-    el.addEventListener('change', saveOptions)});
-  document.getElementById('privatube').addEventListener('change', function() {
+    el.addEventListener('change', saveOptions)
+  });
+  document.getElementById('privatube').addEventListener('change', function () {
     document.getElementById('playerLabel').textContent = this.checked ? "PrivaTube" : "Nocookie";
     updateNocookieSettingsVisibility();
-    });
+  });
+  
   // Toggle API key visibility
-  document.getElementById('toggleApiKeyBtn').addEventListener('click', function() {
+  document.getElementById('toggleApiKeyBtn').addEventListener('click', function () {
     apiKeyVisible = !apiKeyVisible;
     updateApiKeyInputVisibility();
   });
   restoreOptions();
 });
 
-document.getElementById('privatube').addEventListener('change', function() {
+document.getElementById('privatube').addEventListener('change', function () {
   document.getElementById('playerLabel').textContent = this.checked ? "PrivaTube" : "Nocookie";
 });
 
@@ -31,24 +33,24 @@ function updateNocookieSettingsVisibility() {
 
 // API KEY HANDLING
 
-document.getElementById('saveApiKeyBtn').addEventListener('click', function() {
+document.getElementById('saveApiKeyBtn').addEventListener('click', function () {
   const apiKey = document.getElementById('apiKeyInput').value.trim();
   if (!apiKey) {
     showApiKeyToast('API key cannot be empty.', true);
     return;
   }
   const testResp = fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${apiKey}`
-        ).then(response => {
+    `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${apiKey}`
+  ).then(response => {
     if (!response.ok) {
       showApiKeyToast('Invalid API key or poor connection.', true);
       return
     }
-  browser.storage.local.set({ api_key: apiKey }).then(() => {
-    showApiKeyToast('API key saved!');
-    storedApiKey = apiKey;
-    updateApiKeyInputVisibility();
-  });
+    browser.storage.local.set({ api_key: apiKey }).then(() => {
+      showApiKeyToast('API key saved!');
+      storedApiKey = apiKey;
+      updateApiKeyInputVisibility();
+    });
   })
 });
 

@@ -1,136 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>YouTubeSwapper V4.1.0</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="icons/icon-96.png">
-</head>
-<body>
-  <h1>YouTubeSwapper Settings</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <title>YouTubeSwapper V4.1.0</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="icons/icon-96.png">
+  </head>
+  <body>
+    <h1>YouTubeSwapper Settings</h1>
 
     <!-- Select between nocookies and PrivaTube -->
     <div class="settings-card">
-    <h2>Player Selection</h2>
-    <div class="setting-row">
-      <span class="setting-label">
-        Default player:&nbsp;
-        <strong id="playerLabel">PrivaTube</strong>
-        <span class="player-switch-desc">(PrivaTube: more features, Nocookie: privacy-focused)</span>
-      </span>
-      <label class="switch" title="Switch between PrivaTube and Nocookie player">
-        <input type="checkbox" id="privatube">
-        <span class="slider"></span>
-      </label>
+      <h2>Player Selection</h2>
+      <div class="setting-row">
+        <span class="setting-label">
+          Default player:&nbsp;
+          <strong id="playerLabel">PrivaTube</strong>
+          <span class="player-switch-desc">(PrivaTube: more features, Nocookie:
+            privacy-focused)</span>
+        </span>
+        <label class="switch"
+          title="Switch between PrivaTube and Nocookie player">
+          <input type="checkbox" id="privatube">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Nocookie-player Section -->
+      <div id="nocookieSettings">
+        <div class="setting-row">
+          <label for="hl" class="setting-label">Interface language</label>
+          <select id="hl">
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label for="cc_lang" class="setting-label">Subtitle language</label>
+          <select id="cc_lang">
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label for="cc_load_policy" class="setting-label">Subtitles</label>
+          <label class="switch">
+            <input type="checkbox" id="cc_load_policy">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <label for="theme" class="setting-label">Theme</label>
+          <select id="theme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
     </div>
 
-    <!-- Nocookie-player Section -->
-    <div id="nocookieSettings">
+    <!-- Extension Section -->
+    <div class="settings-card">
+      <h2>Extension</h2>
       <div class="setting-row">
-        <label for="hl" class="setting-label">Interface language</label>
-        <select id="hl">
-          <option value="en">English</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-          <option value="es">Español</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label for="cc_lang" class="setting-label">Subtitle language</label>
-        <select id="cc_lang">
-          <option value="en">English</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-          <option value="es">Español</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label for="cc_load_policy" class="setting-label">Subtitles</label>
+        <label for="notifications_allowed"
+          class="setting-label">Notifications</label>
         <label class="switch">
-          <input type="checkbox" id="cc_load_policy">
+          <input type="checkbox" id="notifications_allowed">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-help">Check if Firefox is allowed to send
+        notifications for this to work.</div>
+
+      <div class="setting-row">
+        <label for="preserve_timestamp" class="setting-label">Preserve timestamp
+          on switch</label>
+        <label class="switch">
+          <input type="checkbox" id="preserve_timestamp">
           <span class="slider"></span>
         </label>
       </div>
       <div class="setting-row">
-        <label for="theme" class="setting-label">Theme</label>
-        <select id="theme">
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
+        <label for="tab_history" class="setting-label">Preserve tab history on
+          switch</label>
+        <label class="switch">
+          <input type="checkbox" id="tab_history">
+          <span class="slider"></span>
+        </label>
       </div>
-    </div>
-  </div>
+      <div class="setting-help">This feature is intended to keep the YouTube
+        video in your tab history.</div>
 
-
-  <!-- Extension Section -->
-  <div class="settings-card">
-    <h2>Extension</h2>
-    <div class="setting-row">
-      <label for="notifications_allowed" class="setting-label">Notifications</label>
-      <label class="switch">
-        <input type="checkbox" id="notifications_allowed">
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div class="setting-help">Check if Firefox is allowed to send notifications for this to work.</div>
-
-    <div class="setting-row">
-      <label for="preserve_timestamp" class="setting-label">Preserve timestamp on switch</label>
-      <label class="switch">
-        <input type="checkbox" id="preserve_timestamp">
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div class="setting-row">
-      <label for="tab_history" class="setting-label">Preserve tab history on switch</label>
-      <label class="switch">
-        <input type="checkbox" id="tab_history">
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div class="setting-help">This feature is intended to keep the YouTube video in your tab history.</div>
-
-    <div class="setting-row">
-      <label for="download_policy" class="setting-label">
-        Download videos with <a href="https://notube.lol/" target="_blank">notube.lol</a>
-      </label>
-      <label class="switch">
-        <input type="checkbox" id="download_policy">
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div class="setting-help">I do not own notube.lol, use at your own risk.</div>
-
-    <div id="downloadOptions" style="display: none; margin-left: 24px; padding-left: 8px;">
       <div class="setting-row">
-        <label for="download_format" class="setting-label">Default format</label>
-        <select id="download_format">
-          <option value="mp3">MP3</option>
-          <option value="mp3hd">MP3 HD</option>
-          <option value="mp4">MP4</option>
-          <option value="mp4hd">MP4 HD</option>
-          <option value="mp42k">MP4 2K</option>
-          <option value="m4a">M4A</option>
-          <option value="wav">WAV</option>
-          <option value="3gp">3GP</option>
-          <option value="flv">FLV</option>
-        </select>
+        <label for="download_policy" class="setting-label">
+          Download videos with <a href="https://notube.lol/"
+            target="_blank">notube.lol</a>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="download_policy">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-help">I do not own notube.lol, use at your own
+        risk.</div>
+
+      <div id="downloadOptions"
+        style="display: none; margin-left: 24px; padding-left: 8px;">
+        <div class="setting-row">
+          <label for="download_format" class="setting-label">Default
+            format</label>
+          <select id="download_format">
+            <option value="mp3">MP3</option>
+            <option value="mp3hd">MP3 HD</option>
+            <option value="mp4">MP4</option>
+            <option value="mp4hd">MP4 HD</option>
+            <option value="mp42k">MP4 2K</option>
+            <option value="m4a">M4A</option>
+            <option value="wav">WAV</option>
+            <option value="3gp">3GP</option>
+            <option value="flv">FLV</option>
+          </select>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- API Key Section -->
-  <div class="settings-card">
-    <h2>YouTube API Key</h2>
-    <div id="apiKeyContainer">
-      <input id="apiKeyInput" type="password" placeholder="(not set)" class="api-key-input" autocomplete="off" />
-      <button id="toggleApiKeyBtn" type="button">Show</button>
-      <button id="saveApiKeyBtn" class="button small">Save API Key</button>
+    <!-- API Key Section -->
+    <div class="settings-card">
+      <h2>YouTube API Key</h2>
+      <div id="apiKeyContainer">
+        <input id="apiKeyInput" type="password" placeholder="(not set)"
+          class="api-key-input" autocomplete="off" />
+        <button id="toggleApiKeyBtn" type="button">Show</button>
+        <button id="saveApiKeyBtn" class="button small">Save API Key</button>
+      </div>
+      <div id="apiKeyStatus" class="toast"></div>
     </div>
-    <div id="apiKeyStatus" class="toast"></div>
-  </div>
-  <div id="status" class="toast"></div>
+    <div id="status" class="toast"></div>
 
-  <script src="options.js"></script>
-</body>
+    <script src="options.js"></script>
+  </body>
 </html>

@@ -16,45 +16,45 @@ function fetchApiKey() {
     const apiKey = results.api_key; // Correctly access the stored API key
     if (apiKey) {
       return Promise.resolve(apiKey.trim());
-  }
+    }
     return Promise.reject("API key not found.");
   }).catch(() => {
-  return new Promise((resolve, reject) => {
-    // Show modal and set up event listener for save button
-    const modal = document.getElementById('api-key-modal');
-    const errorDiv = document.getElementById('api-key-error');
-    modal.style.display = 'flex';
-    document.getElementById('api-key-input').focus();
+    return new Promise((resolve, reject) => {
+      // Show modal and set up event listener for save button
+      const modal = document.getElementById('api-key-modal');
+      const errorDiv = document.getElementById('api-key-error');
+      modal.style.display = 'flex';
+      document.getElementById('api-key-input').focus();
 
-    const onSave = async () => {
-      const api_key = document.getElementById('api-key-input').value.trim();
-      if (!api_key) {
-        errorDiv.textContent = "Please enter an API key.";
-        errorDiv.style.display = 'block';
-        return;
-      }
-      try {
-        const testResp = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${api_key}`
-        );
-        if (!testResp.ok) {
-          errorDiv.textContent = "Invalid API Key. Please try again.";
+      const onSave = async () => {
+        const api_key = document.getElementById('api-key-input').value.trim();
+        if (!api_key) {
+          errorDiv.textContent = "Please enter an API key.";
           errorDiv.style.display = 'block';
           return;
         }
+        try {
+          const testResp = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=dQw4w9WgXcQ&key=${api_key}`
+          );
+          if (!testResp.ok) {
+            errorDiv.textContent = "Invalid API Key. Please try again.";
+            errorDiv.style.display = 'block';
+            return;
+          }
           browser.storage.local.set({ api_key }).then(() => {
-        API_KEY = api_key;
-        modal.style.display = 'none';
-        document.getElementById('api-key-save-btn').removeEventListener('click', onSave);
-        resolve(api_key);
+            API_KEY = api_key;
+            modal.style.display = 'none';
+            document.getElementById('api-key-save-btn').removeEventListener('click', onSave);
+            resolve(api_key);
           });
-      } catch (err) {
-        errorDiv.textContent = "Network error. Please try again.";
-        errorDiv.style.display = 'block';
-      }
-    };
+        } catch (err) {
+          errorDiv.textContent = "Network error. Please try again.";
+          errorDiv.style.display = 'block';
+        }
+      };
 
-    document.getElementById('api-key-save-btn').addEventListener('click', onSave);
+      document.getElementById('api-key-save-btn').addEventListener('click', onSave);
     });
   });
 }
@@ -66,37 +66,37 @@ async function headerClick() {
 }
 
 async function showHomepage() {
-    // GO TO PrivaTube.html with updated URL
-    const url = new URL(window.location);
-    url.searchParams.delete('ch');
-    url.searchParams.delete('v');
-    url.searchParams.delete('t');
-    url.searchParams.delete('q');
-    const lang = url.searchParams.get('lang');
-    if (!lang) {
-        url.searchParams.set('lang', 'FR'); // Default to 'FR' if no lang param
-        // Open URL in same tab
-        window.location.href = browserUrl("PrivaTube.html?" + url.searchParams.toString());
-    } else {
-        lastRegionCode = lang;
-    }
-    // Set the region code in the button
+  // GO TO PrivaTube.html with updated URL
+  const url = new URL(window.location);
+  url.searchParams.delete('ch');
+  url.searchParams.delete('v');
+  url.searchParams.delete('t');
+  url.searchParams.delete('q');
+  const lang = url.searchParams.get('lang');
+  if (!lang) {
+    url.searchParams.set('lang', 'FR'); // Default to 'FR' if no lang param
     // Open URL in same tab
     window.location.href = browserUrl("PrivaTube.html?" + url.searchParams.toString());
+  } else {
+    lastRegionCode = lang;
+  }
+  // Set the region code in the button
+  // Open URL in same tab
+  window.location.href = browserUrl("PrivaTube.html?" + url.searchParams.toString());
 }
 
 
 async function searchVideos(query) {
-    // Implement search logic with search args in URL
-    closePlayer();
-    const url = new URL(window.location);
-    url.searchParams.delete('v');
-    url.searchParams.delete('t');
-    url.searchParams.delete('ch');
-    queryFromField = document.getElementById('searchQuery').value.trim();
-    console.log("Search query from field:", queryFromField);
-    url.searchParams.set('q', queryFromField);
-    window.location.href = browserUrl("PrivaTube.html?" + url.searchParams.toString());
+  // Implement search logic with search args in URL
+  closePlayer();
+  const url = new URL(window.location);
+  url.searchParams.delete('v');
+  url.searchParams.delete('t');
+  url.searchParams.delete('ch');
+  queryFromField = document.getElementById('searchQuery').value.trim();
+  console.log("Search query from field:", queryFromField);
+  url.searchParams.set('q', queryFromField);
+  window.location.href = browserUrl("PrivaTube.html?" + url.searchParams.toString());
 }
 
 
@@ -119,20 +119,20 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
 
 
   closePlayer(); // Close player on page load
-    if (input) {
-        input.value = ''; // Clear search input
-    }
+  if (input) {
+    input.value = ''; // Clear search input
+  }
 
-  input.addEventListener('keydown', function(event) {
+  input.addEventListener('keydown', function (event) {
     if (event.key === 'Enter') {
       searchVideos();
     }
   });
 
-  document.addEventListener('keydown', function(event) {
-  if (event.key === "Escape" && shareModal && shareModal.style.display === 'flex') {
-    shareModal.style.display = 'none';
-  }
+  document.addEventListener('keydown', function (event) {
+    if (event.key === "Escape" && shareModal && shareModal.style.display === 'flex') {
+      shareModal.style.display = 'none';
+    }
   });
 
   btn.addEventListener('click', (e) => {
@@ -165,72 +165,72 @@ document.addEventListener('DOMContentLoaded', () => { // Ensure player is closed
 
   // Handle country selection
   list.querySelectorAll('div').forEach(item => {
-  item.addEventListener('click', (e) => {
-    const code = item.getAttribute('data-code');
-    btn.innerHTML = `${code} ▼`;
-    list.style.display = 'none';
-    btn.classList.remove('active');
-    lastRegionCode = code;
-    const url = new URL(window.location);
-    url.searchParams.set('lang', lastRegionCode);
-    window.history.replaceState({}, '', url);
-    mainHeader.href = browserUrl("PrivaTube.html?lang=" + lastRegionCode); // Update header link to include region code
-    });
-    // Handle sort selection
-  commentList.querySelectorAll('div').forEach(item => {
     item.addEventListener('click', (e) => {
       const code = item.getAttribute('data-code');
-      commentSort = code === 'recent' ? 'time' : 'relevance';
-      commentList.style.display = 'none';
-      commentSortBtn.classList.remove('active');
-      // Reload comments with new sort order
-      if (currentCommentsVideoId) {
-        displayComments(currentCommentsVideoId);
-        document.getElementById("comment-count").textContent = video.statistics.commentCount ? `${Number(video.statistics.commentCount).toLocaleString('en-EN')} Comments` : 'N/A Comments';
-      }
+      btn.innerHTML = `${code} ▼`;
+      list.style.display = 'none';
+      btn.classList.remove('active');
+      lastRegionCode = code;
+      const url = new URL(window.location);
+      url.searchParams.set('lang', lastRegionCode);
+      window.history.replaceState({}, '', url);
+      mainHeader.href = browserUrl("PrivaTube.html?lang=" + lastRegionCode); // Update header link to include region code
     });
+    // Handle sort selection
+    commentList.querySelectorAll('div').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const code = item.getAttribute('data-code');
+        commentSort = code === 'recent' ? 'time' : 'relevance';
+        commentList.style.display = 'none';
+        commentSortBtn.classList.remove('active');
+        // Reload comments with new sort order
+        if (currentCommentsVideoId) {
+          displayComments(currentCommentsVideoId);
+          document.getElementById("comment-count").textContent = video.statistics.commentCount ? `${Number(video.statistics.commentCount).toLocaleString('en-EN')} Comments` : 'N/A Comments';
+        }
+      });
     });
   });
-  
+
   fetchApiKey().then(key => {
-  if (key && videoId) {
-    API_KEY = key;
-    playVideo(videoId)
-  } else {
-    closePlayer();
+    if (key && videoId) {
+      API_KEY = key;
+      playVideo(videoId)
+    } else {
+      closePlayer();
     }
-  // If key is missing/invalid, promptForApiKey() is already called inside fetchApiKey()
+    // If key is missing/invalid, promptForApiKey() is already called inside fetchApiKey()
   }).catch(err => {
     // Optional: log error, but don't show homepage
     console.error("API Key error:", err);
   });
 
   if (searchBtn) {
-    searchBtn.addEventListener('click', function() {
+    searchBtn.addEventListener('click', function () {
       searchVideos();
     });
   }
 
-  
+
   if (shareBtn && shareModal && shareLink && shareCloseBtn) {
-    shareBtn.onclick = function() {
+    shareBtn.onclick = function () {
       if (!lastPlayedVideoId) return;
       const shareUrl = `https://ccypri3n.github.io/PrivaTube/?v=${lastPlayedVideoId}`;
       shareLink.value = shareUrl;
       shareModal.style.display = 'flex';
       shareLink.select();
     };
-    shareCloseBtn.onclick = function() {
+    shareCloseBtn.onclick = function () {
       shareModal.style.display = 'none';
     };
     // Optional: close modal when clicking backdrop
-    shareModal.querySelector('.api-key-modal-backdrop').onclick = function() {
+    shareModal.querySelector('.api-key-modal-backdrop').onclick = function () {
       shareModal.style.display = 'none';
     };
   }
-// Copy share link functionality
+  // Copy share link functionality
   if (copyBtn && shareLink) {
-    copyBtn.onclick = function() {
+    copyBtn.onclick = function () {
       shareLink.select();
       document.execCommand('copy');
       copyBtn.textContent = "Copied!";
@@ -282,10 +282,10 @@ async function videoInfoShow(videoId) {
         document.getElementById('video-title').textContent = video.snippet.title;
         document.getElementById('video-description').innerHTML = youtubeDescriptiontoPrivaTube(video.snippet.description);
         document.getElementById('view-count').innerHTML = video.statistics.viewCount
-            ? `<img src="web/icons/views-96.svg" alt="Views" class="description-view-icon" style="width:16px;height:16px;vertical-align:middle;margin-left:8px;margin-right:4px;">${Number(video.statistics.viewCount)
-              .toLocaleString('de-DE')}`
-            : '';
-          const publishedDate = new Date(video.snippet.publishedAt);
+          ? `<img src="web/icons/views-96.svg" alt="Views" class="description-view-icon" style="width:16px;height:16px;vertical-align:middle;margin-left:8px;margin-right:4px;">${Number(video.statistics.viewCount)
+            .toLocaleString('de-DE')}`
+          : '';
+        const publishedDate = new Date(video.snippet.publishedAt);
         document.getElementById('video-published-date').textContent =
           publishedDate
             ? publishedDate.toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })
@@ -300,7 +300,7 @@ async function videoInfoShow(videoId) {
       document.getElementById('video-title').textContent = 'Video Title';
       document.getElementById('video-description').textContent = 'Video description will appear here.';
       document.getElementById('view-count').textContent = 'Views: N/A';
-      
+
       video = null;
     }
 
@@ -397,7 +397,7 @@ async function playVideo(videoId) {
   if (bannerDiv) bannerDiv.style.display = 'none';
   if (videoInfoDiv) videoInfoDiv.style.display = 'block'; // <-- Show info
   videoInfoShow(videoId);
-  
+
 }
 
 function closePlayer() {
@@ -422,7 +422,7 @@ function createChannelUrl(channelId) {
   params.set('lang', lang);
   console.log("Channel URL with params:", params.toString());
   channelUrl = browserUrl("PrivaTube.html?" + params.toString());
-  return(channelUrl);
+  return (channelUrl);
 }
 
 function youtubeDescriptiontoPrivaTube(description) {
@@ -430,7 +430,7 @@ function youtubeDescriptiontoPrivaTube(description) {
   if (!description) return '';
   // Remove excessive whitespace
   description = description.replace(/\s+/g, ' ').trim();
-    // Regex to match YouTube video URLs (both with and without "www.")
+  // Regex to match YouTube video URLs (both with and without "www.")
   const ytUrlRegex = /https?:\/\/(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/g;
 
   // Replace each YouTube video URL with your custom format
@@ -542,12 +542,11 @@ function displayComments(videoId, pageToken = null, append = false) {
             <div class="comment-main">
               <div class="comment-header">
               ${comment.authorChannelId ? `<a href="${channelUrl}" class="comment-author-link"><label class="comment-author">${comment.authorDisplayName}</label></a>` : `<strong class="comment-author">${comment.authorDisplayName}</strong>`}
-                <span class="comment-date">${
-                new Date(comment.publishedAt).toLocaleString(undefined, {
-                  day: '2-digit', month: '2-digit', year: 'numeric',
-                  hour: '2-digit', minute: '2-digit'
-                })
-              }</span>
+                <span class="comment-date">${new Date(comment.publishedAt).toLocaleString(undefined, {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          })
+            }</span>
               </div>
               <div class="comment-text">${text}</div>
                <div class="comment-likes">
@@ -557,7 +556,7 @@ function displayComments(videoId, pageToken = null, append = false) {
           `;
           commentWrapper.appendChild(commentDiv);
         });
-         // Show "Load More" button if there are more comments
+        // Show "Load More" button if there are more comments
         if (data.nextPageToken) {
           nextPageToken = data.nextPageToken;
           toggleLoadMoreButton(true);
@@ -575,7 +574,7 @@ function displayComments(videoId, pageToken = null, append = false) {
     });
 }
 
-document.getElementById('load-more-btn').onclick = function() {
+document.getElementById('load-more-btn').onclick = function () {
   if (currentCommentsVideoId && nextPageToken) {
     displayComments(currentCommentsVideoId, nextPageToken, true);
   }
