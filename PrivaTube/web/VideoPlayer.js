@@ -370,12 +370,15 @@ async function playVideo(videoId) {
   url.searchParams.delete('ch');
   url.searchParams.delete('q');
   url.searchParams.set('v', videoId);
+  const hl = url.searchParams.get('hl') || 'en';
+  const cc_lang_pref = url.searchParams.get('cc_lang_pref') || 'en';
+  const cc_load_policy = url.searchParams.get('cc_load_policy') || '1';
   const time = url.searchParams.get('t');
   // Use pushState to update URL without reloading
   window.history.replaceState({}, '', url);
-  let videoUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+  let videoUrl = `https://www.youtube-nocookie.com/embed/${videoId}?hl=${hl}&cc_lang_pref=${cc_lang_pref}&cc_load_policy=${cc_load_policy}`;
   if (time && !isNaN(Number(time))) {
-    videoUrl += `?start=${Number(time)}`;
+    videoUrl += `&start=${Number(time)}`;
   }
   const playerDiv = document.getElementById('video');
   const resultsDiv = document.getElementById('results');
