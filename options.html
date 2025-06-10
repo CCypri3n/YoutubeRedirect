@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>YouTubeSwapper V4.0.1</title>
+  <title>YouTubeSwapper V4.0.2</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="icons/icon-96.png">
 </head>
 <body>
   <h1>YouTubeSwapper Settings</h1>
 
-  <!-- Nocookie-player Section -->
-  <div class="settings-card">
-    <h2>Nocookie-player</h2>
+    <!-- Select between nocookies and PrivaTube -->
+    <div class="settings-card">
+    <h2>Player Selection</h2>
     <div class="setting-row">
       <span class="setting-label">
-        Current Player:&nbsp;
+        Default player:&nbsp;
         <strong id="playerLabel">PrivaTube</strong>
-        <span class="player-switch-desc">(PrivaTube needs a youtube API Key to work.)</span>
+        <span class="player-switch-desc">(PrivaTube: more features, Nocookie: privacy-focused)</span>
       </span>
       <label class="switch" title="Switch between PrivaTube and Nocookie player">
         <input type="checkbox" id="privatube">
@@ -24,39 +24,43 @@
       </label>
     </div>
 
-    <div class="setting-row">
-      <label for="hl" class="setting-label">Interface language</label>
-      <select id="hl">
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="de">Deutsch</option>
-        <option value="es">Español</option>
-      </select>
-    </div>
-    <div class="setting-row">
-      <label for="cc_lang" class="setting-label">Subtitle language</label>
-      <select id="cc_lang">
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="de">Deutsch</option>
-        <option value="es">Español</option>
-      </select>
-    </div>
-    <div class="setting-row">
-      <label for="cc_load_policy" class="setting-label">Subtitles</label>
-      <label class="switch">
-        <input type="checkbox" id="cc_load_policy">
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div class="setting-row">
-      <label for="theme" class="setting-label">Theme</label>
-      <select id="theme">
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-      </select>
+    <!-- Nocookie-player Section -->
+    <div id="nocookieSettings">
+      <div class="setting-row">
+        <label for="hl" class="setting-label">Interface language</label>
+        <select id="hl">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label for="cc_lang" class="setting-label">Subtitle language</label>
+        <select id="cc_lang">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label for="cc_load_policy" class="setting-label">Subtitles</label>
+        <label class="switch">
+          <input type="checkbox" id="cc_load_policy">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <label for="theme" class="setting-label">Theme</label>
+        <select id="theme">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
     </div>
   </div>
+
 
   <!-- Extension Section -->
   <div class="settings-card">

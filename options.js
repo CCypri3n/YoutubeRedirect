@@ -6,15 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll(
     '#hl, #cc_lang, #cc_load_policy, #theme, #notifications_allowed, #download_policy, #download_format, #preserve_timestamp, #tab_history, #privatube'
   ).forEach(el => {
-    el.addEventListener('change', saveOptions);
-  });
-
+    el.addEventListener('change', saveOptions)});
+  document.getElementById('privatube').addEventListener('change', function() {
+    document.getElementById('playerLabel').textContent = this.checked ? "PrivaTube" : "Nocookie";
+    updateNocookieSettingsVisibility();
+    });
   // Toggle API key visibility
   document.getElementById('toggleApiKeyBtn').addEventListener('click', function() {
     apiKeyVisible = !apiKeyVisible;
     updateApiKeyInputVisibility();
   });
-
   restoreOptions();
 });
 
@@ -22,6 +23,11 @@ document.getElementById('privatube').addEventListener('change', function() {
   document.getElementById('playerLabel').textContent = this.checked ? "PrivaTube" : "Nocookie";
 });
 
+function updateNocookieSettingsVisibility() {
+  const isPrivaTube = document.getElementById('privatube').checked;
+  // Show Nocookie settings only if PrivaTube is NOT selected
+  document.getElementById('nocookieSettings').style.display = isPrivaTube ? 'none' : 'block';
+}
 
 // API KEY HANDLING
 
@@ -136,6 +142,7 @@ function restoreOptions() {
 
     browser.runtime.sendMessage({ action: "rebuild-context-menus" });
     updateDownloadOptionsVisibility();
+    updateNocookieSettingsVisibility();
   });
 }
 
