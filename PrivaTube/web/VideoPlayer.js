@@ -464,7 +464,8 @@ function youtubeDescriptiontoPrivaTube(description) {
     } else {
       seconds = parts[0]; // Just in case
     }
-    return `<a href=browserUrl("video.html?v=${lastPlayedVideoId}&t=${seconds}">${match})</a>`;
+    const url = browserUrl(`video.html?v=${lastPlayedVideoId}&t=${seconds}`);
+    return `<a href="${url}">${match}</a>`;
   });
 
   return linkify(description);
